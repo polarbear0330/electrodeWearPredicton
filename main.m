@@ -55,6 +55,7 @@ toc
 % 蚀除（输入：完整矩阵，两放点电，两蚀坑半径；输出：完整矩阵）
 disp('erode:');
 tic,[matrix] = erode(matrix,rt,rw,sparkpoint_tool,sparkpoint_workp);toc
+
 % 以下用于测试：
 % matrix(sparkpoint_tool(1),sparkpoint_tool(2))%1
 % matrix(sparkpoint_tool(1)+1,sparkpoint_tool(2))%0
@@ -65,8 +66,9 @@ tic,[matrix] = erode(matrix,rt,rw,sparkpoint_tool,sparkpoint_workp);toc
 % size(matrix)
 %--------------------------------------------------------------------------
 
-
+tic,
 disp('result pic:');
+toc
 tic,
 figure(4);
 imshow(matrix);

@@ -1,4 +1,4 @@
-function [ matrix ] = erode( matrix,rt,rw,toolP,workP )
+function [ matrix ] = erode( matrix,rt,rw,toolSparkP,workSparkP )
 %ERODE 放电蚀除
 %   输入：
 % matrix - 完整矩阵，
@@ -7,33 +7,34 @@ function [ matrix ] = erode( matrix,rt,rw,toolP,workP )
 %   输出：
 % matrix - 完整矩阵
 
+%模拟输入，用于测试
 % toolP=sparkpoint_tool;
 % workP=sparkpoint_workp;
 
-r=round(rt);%四舍五入
-startP=toolP-[r,r];%左上角的点（r要不要减1？）
+%石墨电极蚀除
+r=round(rt);
+relativeCenter=[r,r];
+[ matrix ] = partErode( matrix,r,toolSparkP,relativeCenter );
+
+%工件蚀除
+r=round(rw);
+relativeCenter=[0,r];
+[ matrix ] = partErode( matrix,r,workSparkP,relativeCenter );
+
+end
+
+
+function [ matrix ] = partErode( matrix,r,sparkPoint,relativeCenter )
+%以startP为原点，sparkPoint的相对坐标为relativeCenter
+
+startP=sparkPoint-relativeCenter;%左上角的点（r要不要减1？）
 for row=0:r
     for col=0:2*r
-        vector=[row,col]-[r,r];
-        lengthV=normest(vector)
+        vector=[row,col]-relativeCenter;
+        lengthV=normest(vector);
         if lengthV <= r
             matrix(startP(1)+row,startP(2)+col)=0;
         end
     end
 end
-
-r=round(rw);%四舍五入
-startP=workP-[0,r];%（r要不要减1？）
-for row=0:r
-    for col=0:2*r
-        vector=[row,col]-[0,r];
-        lengthV=normest(vector)
-        if lengthV <= r
-            matrix(startP(1)+row,startP(2)+col)=0;
-        end
-    end
 end
-
-
-end
-
