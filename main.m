@@ -45,32 +45,31 @@ geom_dl = [2,2,2,2,2,2,2,2,2,2,2,2;
 showFlag='';
 showFlag='showImage';
 %--------------------------------------------------------------------------
-
+origin_left_up=[...
+    -size(matrix,2)/2, ...
+    size(matrix,1)-size(h1,1)...
+    ]*grid/1000*10; % 仍需修改，尤其是横坐标，/10是转化成了厘米
 
 % 边界跟踪（输入：代表正负电极形状的矩阵；输出：正负电极边界点行列）
 disp('boundary trace:');
-tic,[tm,tn] = boundaryTrace(matrix, showFlag);toc
+tic,[m,n] = boundaryTrace(matrix, showFlag);toc
 
 % 1.矩阵点连接成边，相同斜率的边是同一个边
 % 2.构建 geom 矩阵
 %（输入：boundary points；输出：连接好的edge组成的geom_dl矩阵）
 %（注：二维图形的pde_geom矩阵，暂时不会三维矩阵的构造）
 disp('generate pde Geometry:');
-% tic,[geom_dl] = pdeEdgeGeom(boundaryPoints);toc
+tic,[ geom_dl,edgeNums ] = pdeEdgeGeom( m,n,origin_left_up,grid );toc
 
 % 电场计算（输入：电极形状，边界条件；输出：~,矢量E，E的起点坐标，E的大小）
 disp('calculate E');
-tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(geom_dl);toc
+tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(geom_dl,edgeNums,showFlag);toc
 % tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = wholeE;toc
 
 % 获取放电点对（输入：边界点行列，E，grid边长，左上顶点实际坐标；输出：放点电行列）
 disp('spark point:');
 tic,
-origin_left_up=[...
-    -size(matrix,2)/2, ...
-    size(matrix,1)-size(h1,1)...
-    ]*grid/1000*10; % 仍需修改，尤其是横坐标，/10是转化成了厘米
-[sparkpoint_tool,sparkpoint_workp] = sparkPoint(tm,tn,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);% 仍需修改，尤其是横坐标，/10是转化成了厘米
+[sparkpoint_workp,sparkpoint_tool] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);% 仍需修改，尤其是横坐标，/10是转化成了厘米
 % [sparkpoint_workp] = sparkPoint(wm,wn,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);
 toc
 
@@ -88,13 +87,14 @@ tic,[matrix] = erode(matrix,rt,rw,sparkpoint_tool,sparkpoint_workp);toc
 % size(matrix)
 %--------------------------------------------------------------------------
 
-tic,
-disp('result pic:');
-toc
-tic,
-figure(4);
-imshow(matrix);
-title('蚀除结果');
-toc
-
+if (showFlag == 'showImage')
+    tic,
+    disp('result pic:');
+    toc
+    tic,
+    figure(4);
+    imshow(matrix);
+    title('蚀除结果');
+    toc
+end
 

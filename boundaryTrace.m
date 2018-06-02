@@ -20,8 +20,8 @@ function [m,n]=boundaryTrace(matrix, showFlag)
 % function g=boundary_trace(f) 跟踪目标的外边界，f位输入的二值图像，g为输出的二值图像
 offsetr=[-1, 0 ,1 ,0];
 offsetc=[0, 1, 0 ,-1];
-next_search_dir_table=[4,1,2,3];   % 搜索方向查找表
-next_dir_table=[2,3,4,1];
+next_dir_table=[4,1,2,3];   % 搜索方向查找表,遇到0后，下一个方向（逆，左转）
+next_search_dir_table=[2,3,4,1]; %遇到1后，下一个方向（顺，右转）
 start=-1;
 boundary=-2;
 % 找出起始点
@@ -33,7 +33,7 @@ elseif (mode=="tool")%终止位置的选择，要比工件高，才能选到tool。此处固定了find终
     [rv,cv]=find( (matrix(2:15,:)>0) & (matrix(1:14,:)==0) );
     rv=rv+1;
 elseif (mode == 'all')
-    [rv,cv]=find( (matrix(2,1:end-2)==0) & (matrix(2,2:end-1)>0) );
+    [rv,cv]=find( (matrix(2,1:end-2)==0) & (matrix(2,2:end-1)>0) ,1);
     rv=rv+1;%rv=2
     cv=cv+1;
 end
@@ -44,7 +44,7 @@ matrix(startr,startc)=start;
 cur_p=[startr,startc];
 init_departure_dir=-1;
 done=0;
-next_dir=4;  % 初始方向
+next_dir=3;  % 初始方向
 while ~done
     dir=next_dir;
     found_neighbour=0;
@@ -73,11 +73,10 @@ while ~done
     end
 end
 % bi= f==boundary;
+matrix(startr,startc)=boundary;
+% matrix(startr,startc)
 bi=find(matrix==boundary);
-
 [m,n]=ind2sub(size(matrix),bi);
-m=[startr;m];
-n=[startc;n];
 
 if (showFlag == 'showImage')
     matrix(:)=0;

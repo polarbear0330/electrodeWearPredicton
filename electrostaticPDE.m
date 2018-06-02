@@ -1,6 +1,7 @@
-function [ u,E,pos,points_E,EE,max_absE,point_max,maxE ] = electrostaticPDE( dl )
-%ELECTROSTATICPDE 此处显示有关此函数的摘要
-%   此处显示详细说明
+function [ u,E,pos,points_E,EE,max_absE,point_max,maxE ] = electrostaticPDE( dl,edgeNums,showFlag )
+%ELECTROSTATICPDE 电场计算
+%输入：电极形状，边界条件-edgesNum；
+%输出：~,矢量E，E的起点坐标，E的大小
 
 figure(1);
 pdegplot(dl,'EdgeLabels','on','FaceLabels','on')
@@ -29,9 +30,10 @@ subplot(2,2,2), pdemesh(p,e,t)
 figure(3);
 b = allzerobc(dl);%boundary matrix, MODEL!!!
 % applyBoundaryCondition(model,'dirichlet','edge',1:model.Geometry.NumEdges,'u',0);
-applyBoundaryCondition(b,'dirichlet','edge',2,'u',150);
-applyBoundaryCondition(b,'dirichlet','edge',7,'u',150);
-applyBoundaryCondition(b,'dirichlet','edge',8,'u',150);
+% applyBoundaryCondition(b,'dirichlet','edge',2,'u',150);
+% applyBoundaryCondition(b,'dirichlet','edge',7,'u',150);
+% edgeNums=[2,7,8];
+applyBoundaryCondition(b,'dirichlet','edge',edgeNums,'u',150);
 u=assempde(b,p,e,t,1,0,0); 
 pdeplot(p,e,t,'XYData',u)
 

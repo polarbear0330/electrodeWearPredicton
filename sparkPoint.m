@@ -39,14 +39,14 @@ H=abs(sparks*nE);
 %向量分组，区分出指向tool的和workpiece的
 %cosAngle分别><0，cos(90°)=0,实际夹角为180°左右
 possibleSparks=sparks(rowH,:);
-firstSparkVec=possibleSparks(1,:)
-temp=possibleSparks.*firstSparkVec
-cosAngle=temp(:,1)+temp(:,2)
+firstSparkVec=possibleSparks(1,:);
+temp=possibleSparks.*firstSparkVec;
+cosAngle=temp(:,1)+temp(:,2);
 
-row_possible_1=find(cosAngle>0)
-row_possible_2=find(cosAngle<0)
-sparkpoint1=getMinLengthPt(possibleSparks,row_possible_1,rowH,m,n)
-sparkpoint2=getMinLengthPt(possibleSparks,row_possible_2,rowH,m,n)
+row_possible_1=find(cosAngle>0);
+row_possible_2=find(cosAngle<0);
+sparkpoint1=getMinLengthPt(possibleSparks,row_possible_1,rowH,m,n);
+sparkpoint2=getMinLengthPt(possibleSparks,row_possible_2,rowH,m,n);
 
 end
 
@@ -56,8 +56,8 @@ function [point]=getMinLengthPt(possibleSparks,row,rowH,m,n)
 length2=possibleSparks(row,1).^2 + possibleSparks(row,2).^2;
 [~,sparkPos]=min(length2,[],1);
 %坐标系变换省略：直接对应rowH——m与n
-sparkPos=row(sparkPos)
-sparkPos=rowH(sparkPos)
+sparkPos=row(sparkPos);
+sparkPos=rowH(sparkPos);
 point=[m(sparkPos),n(sparkPos)];
 % x(sparkPos)
 % y(sparkPos)
