@@ -49,7 +49,7 @@ showFlag='showImage';
 
 % 边界跟踪（输入：代表正负电极形状的矩阵；输出：正负电极边界点行列）
 disp('boundary trace:');
-tic,[wm,wn,tm,tn] = boundaryTrace(matrix, showFlag);toc
+tic,[tm,tn] = boundaryTrace(matrix, showFlag);toc
 
 % 1.矩阵点连接成边，相同斜率的边是同一个边
 % 2.构建 geom 矩阵
@@ -70,8 +70,8 @@ origin_left_up=[...
     -size(matrix,2)/2, ...
     size(matrix,1)-size(h1,1)...
     ]*grid/1000*10; % 仍需修改，尤其是横坐标，/10是转化成了厘米
-[sparkpoint_tool] = sparkPoint(tm,tn,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);% 仍需修改，尤其是横坐标，/10是转化成了厘米
-[sparkpoint_workp] = sparkPoint(wm,wn,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);
+[sparkpoint_tool,sparkpoint_workp] = sparkPoint(tm,tn,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);% 仍需修改，尤其是横坐标，/10是转化成了厘米
+% [sparkpoint_workp] = sparkPoint(wm,wn,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);
 toc
 
 % 蚀除（输入：完整矩阵，两放点电，两蚀坑半径；输出：完整矩阵）
