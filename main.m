@@ -27,9 +27,11 @@ ww=ones(5000*gridRatio,20000*gridRatio);
 wr=zeros(5000*gridRatio,5000*gridRatio);
 w=[wl ww wr];
 %whole
-h1=zeros(10,30000*gridRatio);% 此处10写死了
+h1=ones(1,30000*gridRatio);% 此处1写死了
 spark=zeros(sparkDist*gridRatio,30000*gridRatio);% 放电间隙sparkDist至少3个网格
 matrix=[h1; t; spark; w; h1];
+matrix(:,1)=1;
+matrix(:,size(matrix,2))=1;
 toc
 
 geom_dl = [2,2,2,2,2,2,2,2,2,2,2,2;
@@ -40,14 +42,14 @@ geom_dl = [2,2,2,2,2,2,2,2,2,2,2,2;
     0,     0,   1,    1,   0,   0,  0,   0,    1,   1,   1,   1;
     1,     1,   0,    0,   1,   1,  1,   1,    0,   0,   0,   0];
 
-
-
+showFlag='';
+showFlag='showImage';
 %--------------------------------------------------------------------------
 
 
 % 边界跟踪（输入：代表正负电极形状的矩阵；输出：正负电极边界点行列）
 disp('boundary trace:');
-tic,[wm,wn,tm,tn] = boundaryTrace_Main(matrix);toc
+tic,[wm,wn,tm,tn] = boundaryTrace(matrix, showFlag);toc
 
 % 1.矩阵点连接成边，相同斜率的边是同一个边
 % 2.构建 geom 矩阵

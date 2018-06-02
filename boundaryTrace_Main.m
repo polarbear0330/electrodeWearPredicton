@@ -1,4 +1,4 @@
-function [wm,wn,tm,tn]=boundaryTrace_Main(matrix)
+function [m,n]=boundaryTrace_Main(matrix)
 % 边界跟踪功能入口 + 边界imshow
 
 %输入矩阵的模拟数据
@@ -19,22 +19,23 @@ function [wm,wn,tm,tn]=boundaryTrace_Main(matrix)
 
 
 
-% figure(1);
-% imshow(matrix);
-% title('原始图像');
-
-[b,wm,wn]=boundaryTrace(matrix,"workpiece");
-% % [b,wm,wn]=boundaryTrace(matrix,"tool");
+figure(1);
+imshow(matrix);
+title('原始图像');
+% 
+% [b,wm,wn]=boundaryTrace(matrix,"workpiece");
 % figure(2);
 % imshow(b);
 % title('四连通边界跟踪结果workpiece');
-
-[b,tm,tn]=boundaryTrace(matrix,"tool");
+% 
+% [b,tm,tn]=boundaryTrace(matrix,"tool");
 % figure(3);
 % imshow(b);
 % title('四连通边界跟踪结果tool');
 
-  
-                    
+[b,m,n]=boundaryTrace(matrix,"all");
+figure(2);
+imshow(b);
+title('四连通边界跟踪结果all');
     
 
