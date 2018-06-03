@@ -34,46 +34,48 @@ matrix(:,1)=1;
 matrix(:,size(matrix,2))=1;
 toc
 
-geom_dl = [2,2,2,2,2,2,2,2,2,2,2,2;
-    100, -30, 150, -150, 100,-100, 30, -30, -150, 100, 150, -30;
-    -100, 30, 150, -150, 100,-100, 30, -30, -100, 150,  30,-150;
-    50,   51,   0,  300,   0,  50, 51, 300,    0,   0, 300, 300;
-    50,   51, 300,    0,  50,   0,300,  51,    0,   0, 300, 300;
-    0,     0,   1,    1,   0,   0,  0,   0,    1,   1,   1,   1;
-    1,     1,   0,    0,   1,   1,  1,   1,    0,   0,   0,   0];
+% geom_dl = [2,2,2,2,2,2,2,2,2,2,2,2;
+%     100, -30, 150, -150, 100,-100, 30, -30, -150, 100, 150, -30;
+%     -100, 30, 150, -150, 100,-100, 30, -30, -100, 150,  30,-150;
+%     50,   51,   0,  300,   0,  50, 51, 300,    0,   0, 300, 300;
+%     50,   51, 300,    0,  50,   0,300,  51,    0,   0, 300, 300;
+%     0,     0,   1,    1,   0,   0,  0,   0,    1,   1,   1,   1;
+%     1,     1,   0,    0,   1,   1,  1,   1,    0,   0,   0,   0];
 
-showFlag='';
-showFlag='showImage';
+showFlag='000000000';
+% showFlag='showImage';
 %--------------------------------------------------------------------------
 origin_left_up=[...
     -size(matrix,2)/2, ...
     size(matrix,1)-size(h1,1)...
-    ]*grid/1000*10; % 仍需修改，尤其是横坐标，/10是转化成了厘米
+    ]*grid; % 仍需修改，尤其是横坐标
 
-% 边界跟踪（输入：代表正负电极形状的矩阵；输出：正负电极边界点行列）
+
+% 【边界跟踪】
+% （输入：代表正负电极形状的矩阵；输出：正负电极边界点行列）
 disp('boundary trace:');
 tic,[m,n] = boundaryTrace(matrix, showFlag);toc
 
-% 1.矩阵点连接成边，相同斜率的边是同一个边
-% 2.构建 geom 矩阵
-%（输入：boundary points；输出：连接好的edge组成的geom_dl矩阵）
+% 【真实edges合并处理】
+% + pde的boundaryCondition预处理
+% （输入：boundary points；输出：连接好的edge组成的geom_dl矩阵）
 %（注：二维图形的pde_geom矩阵，暂时不会三维矩阵的构造）
 disp('generate pde Geometry:');
-tic,[ geom_dl,edgeNums ] = pdeEdgeGeom( m,n,origin_left_up,grid );toc
+tic,[ edgePoints,edgeNums ] = pdeEdgeGeom( m,n,origin_left_up,grid );toc
 
-% 电场计算（输入：电极形状，边界条件；输出：~,矢量E，E的起点坐标，E的大小）
+% 【电场计算】
+% （输入：电极形状，边界条件；输出：~,矢量E，E的起点坐标，E的大小）
 disp('calculate E');
-tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(geom_dl,edgeNums,showFlag);toc
-% tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = wholeE;toc
+tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,showFlag);toc
+% tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = wholeE;toc %一个pde toolbox的GUI示例，优点是网格好
 
-% 获取放电点对（输入：边界点行列，E，grid边长，左上顶点实际坐标；输出：放点电行列）
+% 【获取放电点对】
+% （输入：边界点行列，E，grid边长，左上顶点实际坐标；输出：放点电行列）
 disp('spark point:');
-tic,
-[sparkpoint_tool,sparkpoint_workp] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,grid,origin_left_up);% 仍需修改，尤其是横坐标，/10是转化成了厘米
-% [sparkpoint_workp] = sparkPoint(wm,wn,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);
-toc
+tic,[sparkpoint_tool,sparkpoint_workp] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,grid,origin_left_up);toc
 
-% 蚀除（输入：完整矩阵，两放点电，两蚀坑半径；输出：完整矩阵）
+% 【蚀除】
+% （输入：完整矩阵，两放点电，两蚀坑半径；输出：完整矩阵）
 disp('erode:');
 tic,[matrix] = erode(matrix,rt,rw,sparkpoint_tool,sparkpoint_workp);toc
 
@@ -92,8 +94,8 @@ if (showFlag == 'showImage')
     disp('result pic:');
     toc
     tic,
-    figure(4);
-    imshow(matrix);
+    figure(5);
+    imshow(matrix,'InitialMagnification','fit')
     title('蚀除结果');
     toc
 end

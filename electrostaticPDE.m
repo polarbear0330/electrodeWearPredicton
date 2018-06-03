@@ -1,43 +1,50 @@
-function [ u,E,pos,points_E,EE,max_absE,point_max,maxE ] = electrostaticPDE( dl,edgeNums,showFlag )
+function [ u,E,pos,points_E,EE,max_absE,point_max,maxE ] = electrostaticPDE( edgePoints,edgeNums,showFlag )
 %ELECTROSTATICPDE 电场计算
 %输入：电极形状，边界条件-edgesNum；
 %输出：~,矢量E，E的起点坐标，E的大小
-
-figure(1);
-pdegplot(dl,'EdgeLabels','on','FaceLabels','on')
-xlim([-1.5,1.5])
-axis equal
-
 
 % model = createpde;
 % geometryFromEdges(model,dl);
 % figure(1);
 % pdegplot(model,'EdgeLabels','on');
 
+%可以输出points，放到pde里面
+startPts=edgePoints; % 列：1 ~ end-1
+endPts=[edgePoints(:,2:end), edgePoints(:,1)]; % 列：2 ~ end
+n=size(edgePoints,2); % 点数 - 列数
+dl=[2*ones(1,n);startPts(1,:);endPts(1,:);startPts(2,:);endPts(2,:);ones(1,n);zeros(1,n)];
 
-
-figure(2);
-% [p,e,t] = initmesh(dl);%默认1.3 
-[p,e,t] = initmesh(dl,'Hgrad',1.9); 
-subplot(2,2,1), pdemesh(p,e,t) 
+[p,e,t] = initmesh(dl,'Hgrad',1.9); %默认1.3 
+% subplot(2,2,1), pdemesh(p,e,t) 
 [p,e,t] = refinemesh(dl,p,e,t); 
-subplot(2,2,2), pdemesh(p,e,t) 
+% subplot(2,2,2), pdemesh(p,e,t) 
 % [p,e,t] = refinemesh(dl,p,e,t); 
 % subplot(2,2,3), pdemesh(p,e,t) 
 % [p,e,t] = refinemesh(dl,p,e,t); 
 % subplot(2,2,4), pdemesh(p,e,t) 
 
-figure(3);
+
 b = allzerobc(dl);%boundary matrix, MODEL!!!
 % applyBoundaryCondition(model,'dirichlet','edge',1:model.Geometry.NumEdges,'u',0);
-% applyBoundaryCondition(b,'dirichlet','edge',2,'u',150);
-% applyBoundaryCondition(b,'dirichlet','edge',7,'u',150);
 % edgeNums=[2,7,8];
 applyBoundaryCondition(b,'dirichlet','edge',edgeNums,'u',150);
 u=assempde(b,p,e,t,1,0,0); 
-pdeplot(p,e,t,'XYData',u)
 
 
+
+if (showFlag == 'showImage')
+    figure(2);
+    pdegplot(dl,'EdgeLabels','on','FaceLabels','on')
+    axis equal
+    
+    figure(3);
+    pdemesh(p,e,t) 
+    axis equal
+    
+    figure(4);
+    pdeplot(p,e,t,'XYData',u)
+    axis equal
+end
 
 
 %------------------E-------------------------------------------------------

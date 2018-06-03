@@ -83,12 +83,16 @@ end
 % bi=find(matrix==boundary);
 % [m,n]=ind2sub(size(matrix),bi);
 
+%     tic,
 if (showFlag == 'showImage')
+
     matrix(:)=0;
-%     matrix(bi)=1;
-    matrix(m,n)=1;
-    % g=im2bw(f);
+    bi=sub2ind(size(matrix),m,n);
+    matrix(bi)=1;
+%     matrix(m,n)=1;%错误
     figure(1);
-    imshow(matrix);
+    imshow(matrix,'InitialMagnification','fit')
     title('四连通边界跟踪结果');
+
 end
+%     toc
