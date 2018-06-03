@@ -34,7 +34,7 @@ elseif (mode=="tool")%终止位置的选择，要比工件高，才能选到tool。此处固定了find终
     rv=rv+1;
 elseif (mode == 'all')
     [rv,cv]=find( (matrix(2,1:end-2)==0) & (matrix(2,2:end-1)>0) ,1);
-    rv=rv+1;%rv=2
+%     rv=rv;%rv=1
     cv=cv+1;
 end
 startr=rv(1);
@@ -45,6 +45,9 @@ cur_p=[startr,startc];
 init_departure_dir=-1;
 done=0;
 next_dir=3;  % 初始方向
+%预分配内存优化
+m=[startr];
+n=[startc];
 while ~done
     dir=next_dir;
     found_neighbour=0;
@@ -65,6 +68,8 @@ while ~done
             if (matrix(neighbour(1),neighbour(2))~=start)
                 matrix(neighbour(1),neighbour(2))=boundary;
                 %可以在这里给mn赋值
+                m=[m;neighbour(1)];
+                n=[n;neighbour(2)];
             end
             cur_p=neighbour;
             break;
@@ -72,16 +77,16 @@ while ~done
         dir=next_dir_table(dir);
     end
 end
-% bi= f==boundary;
-matrix(startr,startc)=boundary;
-% matrix(startr,startc)
-bi=find(matrix==boundary);
-[m,n]=ind2sub(size(matrix),bi);
+% % bi= f==boundary;
+% matrix(startr,startc)=boundary;
+% % matrix(startr,startc)
+% bi=find(matrix==boundary);
+% [m,n]=ind2sub(size(matrix),bi);
 
 if (showFlag == 'showImage')
     matrix(:)=0;
-    matrix(bi)=1;
-    matrix(startr,startc)=1;
+%     matrix(bi)=1;
+    matrix(m,n)=1;
     % g=im2bw(f);
     figure(1);
     imshow(matrix);

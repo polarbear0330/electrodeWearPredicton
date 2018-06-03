@@ -69,7 +69,7 @@ tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(geom_dl,edgeNums,showFl
 % 获取放电点对（输入：边界点行列，E，grid边长，左上顶点实际坐标；输出：放点电行列）
 disp('spark point:');
 tic,
-[sparkpoint_workp,sparkpoint_tool] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);% 仍需修改，尤其是横坐标，/10是转化成了厘米
+[sparkpoint_tool,sparkpoint_workp] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,grid,origin_left_up);% 仍需修改，尤其是横坐标，/10是转化成了厘米
 % [sparkpoint_workp] = sparkPoint(wm,wn,maxPoint',maxE,maxAbsE,grid/1000*10,origin_left_up);
 toc
 
