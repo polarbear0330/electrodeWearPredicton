@@ -8,11 +8,19 @@ function [ u,E,pos,points_E,EE,max_absE,point_max,maxE ] = electrostaticPDE( edg
 % figure(1);
 % pdegplot(model,'EdgeLabels','on');
 
-%可以输出points，放到pde里面
+%顶点连线成边
 startPts=edgePoints; % 列：1 ~ end-1
 endPts=[edgePoints(:,2:end), edgePoints(:,1)]; % 列：2 ~ end
 n=size(edgePoints,2); % 点数 - 列数
 dl=[2*ones(1,n);startPts(1,:);endPts(1,:);startPts(2,:);endPts(2,:);ones(1,n);zeros(1,n)];
+% dl = [2,2,2,2,2,2,2,2,2,2,2,2;
+%     100, -30, 150, -150, 100,-100, 30, -30, -150, 100, 150, -30;
+%     -100, 30, 150, -150, 100,-100, 30, -30, -100, 150,  30,-150;
+%     50,   51,   0,  300,   0,  50, 51, 300,    0,   0, 300, 300;
+%     50,   51, 300,    0,  50,   0,300,  51,    0,   0, 300, 300;
+%     0,     0,   1,    1,   0,   0,  0,   0,    1,   1,   1,   1;
+%     1,     1,   0,    0,   1,   1,  1,   1,    0,   0,   0,   0];
+
 
 [p,e,t] = initmesh(dl,'Hgrad',1.9); %默认1.3 
 % subplot(2,2,1), pdemesh(p,e,t) 

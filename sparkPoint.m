@@ -1,4 +1,4 @@
-function [ sparkpoint1,sparkpoint2 ] = sparkPoint( m,n,point,E,absE,grid,origin_left_up)
+function [ sparkpoint1,sparkpoint2 ] = sparkPoint( m,n,point,E,absE,grid,origin_left_up,sparkDist)
 %%SPARKPOINT 计算放电矩阵点
 % point=[-0.5;0.5]';
 % E=[1;1];
@@ -45,20 +45,25 @@ cosAngle=temp(:,1)+temp(:,2);
 
 row_possible_1=find(cosAngle>0);
 row_possible_2=find(cosAngle<0);
-sparkpoint1=getMinLengthPt(possibleSparks,row_possible_1,rowH,m,n);
-sparkpoint2=getMinLengthPt(possibleSparks,row_possible_2,rowH,m,n);
+sparkpoint1=getMinLengthPt(possibleSparks,row_possible_1,rowH,m,n,sparkDist);
+sparkpoint2=getMinLengthPt(possibleSparks,row_possible_2,rowH,m,n,sparkDist);
 
 end
 
-function [point]=getMinLengthPt(possibleSparks,row,rowH,m,n)
+function [point]=getMinLengthPt(possibleSparks,row,rowH,m,n,sparkDist)
 
 %计算向量长度，取最短的
 length2=possibleSparks(row,1).^2 + possibleSparks(row,2).^2;
-[~,sparkPos]=min(length2,[],1);
+[minLen,sparkPos]=min(sqrt(length2),[],1);
+minLen
 %坐标系变换省略：直接对应rowH——m与n
 sparkPos=row(sparkPos);
 sparkPos=rowH(sparkPos);
 point=[m(sparkPos),n(sparkPos)];
+
+if(minLen>sparkDist*3)
+    point=[-1,-1];
+end
 % x(sparkPos)
 % y(sparkPos)
 end

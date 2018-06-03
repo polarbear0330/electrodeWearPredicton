@@ -53,9 +53,9 @@ for i=1:size(points,2)
     dx=points(1,j)-points(1,i);
     dy=points(2,j)-points(2,i);
     if(dx==0)
-        dp=[-dy/abs(dy);0]*grid/2;
+        dp=[dy/abs(dy);0]*grid/2;
     else
-        dp=[0;dx/abs(dx)]*grid/2;
+        dp=[0;-dx/abs(dx)]*grid/2;
     end
     points(:,i)=points(:,i)+dp;
     points(:,j)=points(:,j)+dp;

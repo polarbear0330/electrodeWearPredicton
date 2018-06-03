@@ -12,22 +12,25 @@ function [ matrix ] = erode( matrix,rt,rw,toolSparkP,workSparkP )
 % workP=sparkpoint_workp;
 
 %石墨电极蚀除
-r=round(rt);
-relativeCenter=[r,r];
-[ matrix ] = partErode( matrix,r,toolSparkP,relativeCenter );
+if(toolSparkP(1)~=-1)
+    r=round(rt);
+    relativeCenter=[r,r];
+    [ matrix ] = partErode( matrix,r,toolSparkP,relativeCenter );
+end
 
 %工件蚀除
-r=round(rw);
-relativeCenter=[0,r];
-[ matrix ] = partErode( matrix,r,workSparkP,relativeCenter );
-
+if(workSparkP(1)~=-1)
+    r=round(rw);
+    relativeCenter=[0,r];
+    [ matrix ] = partErode( matrix,r,workSparkP,relativeCenter );
+end
 end
 
 
 function [ matrix ] = partErode( matrix,r,sparkPoint,relativeCenter )
 %以startP为原点，sparkPoint的相对坐标为relativeCenter
 
-startP=sparkPoint-relativeCenter;%左上角的点（r要不要减1？）
+startP=sparkPoint-relativeCenter; %左上角的点（r要不要减1？）
 for row=0:r
     for col=0:2*r
         vector=[row,col]-relativeCenter;
