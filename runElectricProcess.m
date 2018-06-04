@@ -1,4 +1,4 @@
-function [ matrix ] = runElectricProcess( matrix,matrix_t,startRow,startCol,c )
+function [ matrix,startRow,c,errCode ] = runElectricProcess( matrix,matrix_t,startRow,startCol,c )
 %RUNPROCESS One Cycle
 %   all process simulation
 
@@ -25,12 +25,14 @@ tic,[ edgePoints,edgeNums ] = pdeEdgeGeom( m,n,c.origin_left_up,c.grid );toc
 disp('calculate E');
 tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,c.showFlag);toc
 disp('spark point:');
-tic,[sparkpoint_tool,sparkpoint_workp] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
+tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
 disp('erode:');
 tic,[matrix] = erode(matrix,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp);toc
 disp('feed:');
 tic,
 if(maxAbsE < c.breakE)
+    maxAbsE
+    c.processDepth=c.processDepth-c.grid;
     [height_t,wide_t]=size(matrix_t);
     matrix_t=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
     startRow=startRow+1;
@@ -50,6 +52,7 @@ if (c.showFlag == 'showImage' | c.showFlag=='stepReslt')
     toc
 end
 
+errCode=0|errCode_sparkPts;
 end
 
 

@@ -28,7 +28,7 @@ dl=[2*ones(1,n);startPts(1,:);endPts(1,:);startPts(2,:);endPts(2,:);ones(1,n);ze
 % subplot(2,2,2), pdemesh(p,e,t) 
 [p,e,t] = refinemesh(dl,p,e,t); 
 % subplot(2,2,3), pdemesh(p,e,t) 
-[p,e,t] = refinemesh(dl,p,e,t); 
+% [p,e,t] = refinemesh(dl,p,e,t); 
 % subplot(2,2,4), pdemesh(p,e,t) 
 
 

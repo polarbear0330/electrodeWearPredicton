@@ -1,4 +1,4 @@
-function [ sparkpoint1,sparkpoint2 ] = sparkPoint( m,n,point,E,absE,grid,origin_left_up,sparkDist)
+function [ sparkpoint1,sparkpoint2,errCode ] = sparkPoint( m,n,point,E,absE,grid,origin_left_up,sparkDist)
 %%SPARKPOINT 计算放电矩阵点
 % point=[-0.5;0.5]';
 % E=[1;1];
@@ -42,15 +42,17 @@ possibleSparks=sparks(rowH,:);
 firstSparkVec=possibleSparks(1,:);
 temp=possibleSparks.*firstSparkVec;
 cosAngle=temp(:,1)+temp(:,2);
-
 row_possible_1=find(cosAngle>0);
 row_possible_2=find(cosAngle<0);
-sparkpoint1=getMinLengthPt(possibleSparks,row_possible_1,rowH,m,n,sparkDist);
-sparkpoint2=getMinLengthPt(possibleSparks,row_possible_2,rowH,m,n,sparkDist);
 
+[sparkpoint1,errCode1]=getMinLengthPt(possibleSparks,row_possible_1,rowH,m,n,sparkDist);
+[sparkpoint2,errCode2]=getMinLengthPt(possibleSparks,row_possible_2,rowH,m,n,sparkDist);
+
+errCode=0|(errCode1&errCode2);%考虑&换成|
 end
 
-function [point]=getMinLengthPt(possibleSparks,row,rowH,m,n,sparkDist)
+function [point,errCode]=getMinLengthPt(possibleSparks,row,rowH,m,n,sparkDist)
+errCode=0;
 
 %计算向量长度，取最短的
 length2=possibleSparks(row,1).^2 + possibleSparks(row,2).^2;
@@ -64,8 +66,8 @@ point=[m(sparkPos),n(sparkPos)];
 if(minLen>sparkDist*3)
     point=[-1,-1];
     minLen
+    errCode=1;
 end
-% x(sparkPos)
-% y(sparkPos)
+errCode=0|errCode;
 end
 
