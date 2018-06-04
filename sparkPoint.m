@@ -55,7 +55,7 @@ function [point]=getMinLengthPt(possibleSparks,row,rowH,m,n,sparkDist)
 %计算向量长度，取最短的
 length2=possibleSparks(row,1).^2 + possibleSparks(row,2).^2;
 [minLen,sparkPos]=min(sqrt(length2),[],1);
-minLen
+
 %坐标系变换省略：直接对应rowH——m与n
 sparkPos=row(sparkPos);
 sparkPos=rowH(sparkPos);
@@ -63,6 +63,7 @@ point=[m(sparkPos),n(sparkPos)];
 
 if(minLen>sparkDist*3)
     point=[-1,-1];
+    minLen
 end
 % x(sparkPos)
 % y(sparkPos)

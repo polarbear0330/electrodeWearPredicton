@@ -35,3 +35,27 @@ startCol=floor((wide-size(matrix_t,2))/2)+1;
 matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;
 end
 
+% % 测试model
+% disp('model');
+% tic,
+% %单位：微米
+% %矩阵大小相关系数
+% gridRatio=1/grid;
+% %tool
+% tl=zeros(25000*gridRatio,12000*gridRatio);
+% tt=ones(25000*gridRatio,6000*gridRatio);
+% tr=zeros(25000*gridRatio,12000*gridRatio);
+% t=[tl tt tr];
+% %workpiece
+% wl=zeros(5000*gridRatio,5000*gridRatio);
+% ww=ones(5000*gridRatio,20000*gridRatio);
+% wr=zeros(5000*gridRatio,5000*gridRatio);
+% w=[wl ww wr];
+% %whole
+% h1=ones(1,30000*gridRatio);% 此处1写死了
+% spark=zeros(sparkDist*gridRatio,30000*gridRatio);% 放电间隙sparkDist至少3个网格
+% matrix=[h1; t; spark; w; h1];
+% matrix(:,1)=1;
+% matrix(:,size(matrix,2))=1;
+% toc
+

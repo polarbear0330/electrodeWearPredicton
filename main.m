@@ -1,111 +1,44 @@
 %main 入口程序
 
+% -------------------------------------------------------------------------
+% 参数配置
+conf=loadConfig();
+% 建模
+matrix_t=ones(25000/grid,6000/grid);
+matrix_w=ones(5000/grid,20000/grid);
+[ matrix,startRow,startCol ] = initModelMatrix( matrix_t,matrix_w,conf.sparkDist/conf.grid,conf.wideRatio );
+
+% electric process simulation 电加工仿真
+[ matrix ] = runElectricProcess(matrix,matrix_t,startRow,startCol,conf);
+
+% -------------------------------------------------------------------------
+
+
+function [config]=loadConfig()
+% load config
+
 %grid：微米；
-grid=25; 
+c.grid=25; 
 %假设放电间隙100微米
-sparkDist=75;
+c.sparkDist=75;
 %体积损耗比与蚀坑半径(假设精加工放电坑100um、300um直径)
-rw=300/2/grid;
-wearRatio=1/9;
-rt=rw*sqrt(wearRatio);
-%矩阵大小相关系数
-gridRatio=1/grid;
+c.rw=300/2/c.grid;
+c.wearRatio=1/9;
+c.rt=c.rw*sqrt(c.wearRatio);
+% %矩阵大小相关系数
+% c.gridRatio=1/c.grid;
 %击穿场强大小
-% breakE=
-%--------------------------------------------------------------------------
-disp('model');
-tic,
-%单位：微米
-%tool
-tl=zeros(25000*gridRatio,12000*gridRatio);
-tt=ones(25000*gridRatio,6000*gridRatio);
-tr=zeros(25000*gridRatio,12000*gridRatio);
-t=[tl tt tr];
-%workpiece
-wl=zeros(5000*gridRatio,5000*gridRatio);
-ww=ones(5000*gridRatio,20000*gridRatio);
-wr=zeros(5000*gridRatio,5000*gridRatio);
-w=[wl ww wr];
-%whole
-h1=ones(1,30000*gridRatio);% 此处1写死了
-spark=zeros(sparkDist*gridRatio,30000*gridRatio);% 放电间隙sparkDist至少3个网格
-matrix=[h1; t; spark; w; h1];
-matrix(:,1)=1;
-matrix(:,size(matrix,2))=1;
-toc
+c.breakE=2.4;
+%确定坐标原点——设定图形最左上顶点为如下值，即（1,1）网格的左上顶点的真实坐标
+c.origin_left_up=[0,0];
+%初始建模：模型宽比工件宽（倍数）
+c.wideRatio=1.5;
+%绘图功能开关
+c.showFlag='close_all';
+c.showFlag='showImage';
+c.showFlag='onlyReslt';
+c.showFlag='stepReslt';
 
-
-showFlag='000000000';
-showFlag='showImage';
-showFlag='onlyReslt';
-%--------------------------------------------------------------------------
-%确定坐标原点
-origin_left_up=[...
-    -size(matrix,2)/2, ...
-    size(matrix,1)-size(h1,1)...
-    ]*grid; % 仍需修改，尤其是横坐标
-origin_left_up=[0,0];
-
-matrix_t=tt;
-matrix_w=ww;
-
-disp('model:');
-tic,[ matrix,startRow,startCol ] = initModelMatrix( matrix_t,matrix_w,sparkDist/grid,1.5 );toc
-
-% 【边界跟踪】
-% （输入：代表正负电极形状的矩阵；输出：正负电极边界点行列，且最先追踪输出tool的首边）
-disp('boundary trace:');
-tic,[m,n] = boundaryTrace(matrix, showFlag);toc
-
-% 【真实edges合并处理】
-% + pde的boundaryCondition预处理
-% （输入：boundary points；输出：连接好的edge组成的geom_dl矩阵）
-%（注：二维图形的pde_geom矩阵，暂时不会三维矩阵的构造）
-disp('generate pde Geometry:');
-tic,[ edgePoints,edgeNums ] = pdeEdgeGeom( m,n,origin_left_up,grid );toc
-
-% 【电场计算】
-% （输入：电极形状，边界条件；输出：~,矢量E，E的起点坐标，E的大小）
-disp('calculate E');
-tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,showFlag);toc
-% tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = wholeE;toc %一个pde toolbox的GUI示例，优点是网格好
-
-% 【获取放电点对】
-% （输入：边界点行列，E，grid边长，左上顶点实际坐标；输出：放点电行列）
-disp('spark point:');
-tic,[sparkpoint_tool,sparkpoint_workp] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,grid,origin_left_up,sparkDist);toc
-
-% 【蚀除】
-% （输入：完整矩阵，两放点电，两蚀坑半径；输出：完整矩阵）
-disp('erode:');
-tic,[matrix] = erode(matrix,rt,rw,sparkpoint_tool,sparkpoint_workp);toc
-
-% 【直线进给】
-if(maxAbsE < 2.4)
-    [height_t,wide_t]=size(matrix_t);
-    matrix_t=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
-    startRow=startRow+1;
-    matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;
-end
-% 以下用于测试：
-% matrix(sparkpoint_tool(1),sparkpoint_tool(2))%1
-% matrix(sparkpoint_tool(1)+1,sparkpoint_tool(2))%0
-% matrix(sparkpoint_tool(1),sparkpoint_tool(2)+1)%0
-% matrix(sparkpoint_workp(1),sparkpoint_workp(2))%1
-% matrix(sparkpoint_workp(1)-1,sparkpoint_workp(2))%0
-% matrix(sparkpoint_workp(1)+1,sparkpoint_workp(2))%1
-% size(matrix)
-%--------------------------------------------------------------------------
-
-%展示结果
-if (showFlag == 'showImage' | showFlag=='onlyReslt')
-    tic,
-    disp('result pic:');
-    toc
-    tic,
-    figure(5);
-    imshow(matrix,'InitialMagnification','fit')
-    title('蚀除结果');
-    toc
+config=c;
 end
 
