@@ -1,8 +1,7 @@
 function [ matrix,startRow,c,errCode ] = runElectricProcess( matrix,matrix_t,startRow,startCol,c )
 %RUNPROCESS One Cycle
 %   all process simulation
-
-
+errCode=0;
 % 【边界跟踪】
 % （输入：形状矩阵；输出：边界点集-行列，且最先追踪输出tool的首边）
 % 【真实edges合并处理】 + pde的boundaryCondition预处理
@@ -10,24 +9,21 @@ function [ matrix,startRow,c,errCode ] = runElectricProcess( matrix,matrix_t,sta
 % （注：二维图形的pde_geom矩阵，暂时不会三维矩阵的构造）
 % 【电场计算】
 % （输入：电极形状，边界条件；输出：~,矢量E，E的起点坐标，E的大小）
+% 【直线进给】 + 提前结束此函数 【return】
+% （输入：matrix_tool、matrix；输出：matrix）
 %  [~,~,~,~,~,maxAbsE,maxPoint,maxE] = wholeE; %一个pde toolbox的GUI示例，优点是网格好
 % 【获取放电点对】
 % （输入：边界点行列，E，grid边长，左上顶点实际坐标；输出：放点电行列）
 % 【蚀除】
 % （输入：完整矩阵，两放点电，两蚀坑半径；输出：完整矩阵）
-% 【直线进给】
-% （输入：matrix_tool、matrix；输出：matrix）
+
 
 disp('boundary trace:');
 tic,[m,n] = boundaryTrace(matrix, c.showFlag);toc
 disp('combine pts to edge:');
-tic,[ edgePoints,edgeNums ] = pdeEdgeGeom( m,n,c.origin_left_up,c.grid );toc
+tic,[edgePoints,edgeNums] = pdeEdgeGeom( m,n,c.origin_left_up,c.grid );toc
 disp('calculate E');
 tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,c.showFlag);toc
-disp('spark point:');
-tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
-disp('erode:');
-tic,[matrix] = erode(matrix,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp);toc
 disp('feed:');
 tic,
 if(maxAbsE < c.breakE)
@@ -37,10 +33,16 @@ if(maxAbsE < c.breakE)
     matrix_t=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
     startRow=startRow+1;
     matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;
+    return
 end
 toc
+disp('spark point:');
+tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
+disp('erode:');
+tic,[matrix] = erode(matrix,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp);toc
 
-%展示结果
+
+%展示单步结果
 if (c.showFlag == 'showImage' | c.showFlag=='stepReslt')
     tic,
     disp('result pic:');
