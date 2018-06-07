@@ -22,7 +22,7 @@ disp('boundary trace:');
 tic,[m,n] = boundaryTrace(matrix, c.showFlag);toc
 disp('combine pts to edge:');
 tic,[edgePoints,edgeNums] = pdeEdgeGeom( m,n,c.origin_left_up,c.grid );toc
-disp('calculate E');
+fprintf(2,'calculate E: \n');
 tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,c.showFlag);toc
 disp('feed:');
 tic,
