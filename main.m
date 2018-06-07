@@ -22,9 +22,9 @@ while 1
     try
         % 电加工仿真 electric process simulation
         [ matrix,startRow,conf,errCode ] = runElectricProcess(matrix,matrix_t,startRow,startCol,conf);
-        if(errCode)%?????????????????????????????????????????
-            continue;
-        end
+%         if(errCode)
+%             continue;
+%         end
     catch
         errCode=1;
         errorReport=getReport(MException.last);
@@ -34,8 +34,7 @@ while 1
     % 错误处理
     if(errCode || conf.processDepth==0)
         save;
-        conf.showFlag='showImage';
-        runElectricProcess(matrix,matrix_t,startRow,startCol,conf);
+        boundaryTrace(matrix, 'showImage');
         fprintf(2, '\n currentDepth = %d \n\n', conf.processDepth);
         break;
     end

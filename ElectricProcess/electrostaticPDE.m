@@ -1,4 +1,4 @@
-function [ u,E,pos,points_E,EE,max_absE,point_max,maxE ] = electrostaticPDE( edgePoints,edgeNums,showFlag )
+function [ u,E,pos,points_E,EE,max_absE,point_max,maxE ] = electrostaticPDE( edgePoints,edgeNums,meshCount,showFlag )
 %ELECTROSTATICPDE 电场计算
 %输入：电极形状，边界条件-edgesNum；
 %输出：~,矢量E，E的起点坐标，E的大小
@@ -24,9 +24,12 @@ dl=[2*ones(1,n);startPts(1,:);endPts(1,:);startPts(2,:);endPts(2,:);ones(1,n);ze
 
 [p,e,t] = initmesh(dl,'Hgrad',1.9); %默认1.3 
 % subplot(2,2,1), pdemesh(p,e,t) 
-[p,e,t] = refinemesh(dl,p,e,t); 
+for i=1:meshCount
+%     meshCount
+    [p,e,t] = refinemesh(dl,p,e,t);
+end
 % subplot(2,2,2), pdemesh(p,e,t) 
-[p,e,t] = refinemesh(dl,p,e,t); 
+% [p,e,t] = refinemesh(dl,p,e,t); 
 % subplot(2,2,3), pdemesh(p,e,t) 
 % [p,e,t] = refinemesh(dl,p,e,t); 
 % subplot(2,2,4), pdemesh(p,e,t) 

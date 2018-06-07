@@ -2,6 +2,9 @@ function [ matrix,startRow,c,errCode ] = runElectricProcess( matrix,matrix_t,sta
 %RUNPROCESS One Cycle
 %   all process simulation
 errCode=0;
+errorCount=3;%允许错误次数
+showFlag=c.showFlag;
+
 % 【边界跟踪】
 % （输入：形状矩阵；输出：边界点集-行列，且最先追踪输出tool的首边）
 % 【真实edges合并处理】 + pde的boundaryCondition预处理
@@ -19,31 +22,51 @@ errCode=0;
 
 
 disp('boundary trace:');
-tic,[m,n] = boundaryTrace(matrix, c.showFlag);toc
+tic,[m,n] = boundaryTrace(matrix, showFlag);toc
+
 disp('combine pts to edge:');
 tic,[edgePoints,edgeNums] = pdeEdgeGeom( m,n,c.origin_left_up,c.grid );toc
-fprintf(2,'calculate E: \n');
-tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,c.showFlag);toc
-disp('feed:');
-tic,
-if(maxAbsE < c.breakE)
-    maxAbsE
-    c.processDepth=c.processDepth-c.grid;
-    [height_t,wide_t]=size(matrix_t);
-    matrix_t=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
-    startRow=startRow+1;
-    matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;
-    return
+
+
+while 1    
+    fprintf(2,'calculate E: \n');
+    tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,3-errorCount,showFlag)
+    toc
+    
+    disp('feed:');
+    tic,
+    if(maxAbsE < c.breakE)
+        maxAbsE
+        c.processDepth=c.processDepth-c.grid;
+        [height_t,wide_t]=size(matrix_t);
+        matrix_t=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
+        startRow=startRow+1;
+        matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;
+        return
+    end
+    toc
+    
+    disp('spark point:');
+    tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
+    
+    if(errCode_sparkPts==0 || errorCount<=0)
+        errorCount
+        break;
+    elseif(errorCount==1)
+        errorCount
+        showFlag = 'showImage';
+    end
+    
+    errorCount=errorCount-1;
 end
-toc
-disp('spark point:');
-tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
+
 disp('erode:');
 tic,[matrix] = erode(matrix,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp);toc
 
 
+
 %展示单步结果
-if (c.showFlag == 'showImage' | c.showFlag=='stepReslt')
+if (showFlag == 'showImage' | showFlag=='stepReslt')
     tic,
     disp('result pic:');
     toc
