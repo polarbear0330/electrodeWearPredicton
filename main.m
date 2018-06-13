@@ -22,12 +22,10 @@ while 1
     try
         % 电加工仿真 electric process simulation
         [ matrix,startRow,conf,errCode ] = runElectricProcess(matrix,matrix_t,startRow,startCol,conf);
-%         if(errCode)
-%             continue;
-%         end
-    catch
+    catch exception
+        save;
         errCode=1;
-        errorReport=getReport(MException.last);
+        errorReport=getReport(exception);
         disp(errorReport);
     end
     

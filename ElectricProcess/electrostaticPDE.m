@@ -21,8 +21,8 @@ dl=[2*ones(1,n);startPts(1,:);endPts(1,:);startPts(2,:);endPts(2,:);ones(1,n);ze
 %     0,     0,   1,    1,   0,   0,  0,   0,    1,   1,   1,   1;
 %     1,     1,   0,    0,   1,   1,  1,   1,    0,   0,   0,   0];
 
-
-[p,e,t] = initmesh(dl,'Hgrad',1.9); %д╛хо1.3 
+Hgrad=1.9-meshCount/5;
+[p,e,t] = initmesh(dl,'Hgrad',Hgrad); %д╛хо1.3 
 % subplot(2,2,1), pdemesh(p,e,t) 
 for i=1:meshCount
 %     meshCount

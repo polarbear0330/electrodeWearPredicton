@@ -30,7 +30,7 @@ tic,[edgePoints,edgeNums] = pdeEdgeGeom( m,n,c.origin_left_up,c.grid );toc
 
 while 1    
     fprintf(2,'calculate E: \n');
-    tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,3-errorCount,showFlag)
+    tic,[~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,3-errorCount,showFlag);
     toc
     
     disp('feed:');
@@ -50,7 +50,7 @@ while 1
     tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
     
     if(errCode_sparkPts==0 || errorCount<=0)
-        errorCount
+%         errorCount
         break;
     elseif(errorCount==1)
         errorCount

@@ -27,5 +27,6 @@ c.showFlag='stepReslt';
 c.showFlag='onlyReslt';
 
 config=c;
+disp('load init config paras');
 end
 
