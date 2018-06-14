@@ -37,6 +37,13 @@ while 1
     tic,
     if(maxAbsE < c.breakE)
         maxAbsE
+        if(maxAbsE < 0.3)
+            fprintf(2,'场强过小(<0.3)，疑似tool与workpiece发生接触，等势了\n');
+            fprintf(2,'请结合下方“未定义函数或变量 sparkpoint_tool”判断\n');
+            errCode_feed = 1;
+            errCode=errCode|errCode_feed;
+            break % 此处可替换成return
+        end
         c.processDepth=c.processDepth-c.grid;
         [height_t,wide_t]=size(matrix_t);
         matrix_t=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
@@ -49,6 +56,7 @@ while 1
     disp('spark point:');
     tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
     
+    % 放电点无误 或 达到允许的错误次数上限，则break
     if(errCode_sparkPts==0 || errorCount<=0)
 %         errorCount
         break;
@@ -77,7 +85,7 @@ if (showFlag == 'showImage' | showFlag=='stepReslt')
     toc
 end
 
-errCode=0|errCode_sparkPts;
+errCode=errCode|errCode_sparkPts;
 end
 
 
