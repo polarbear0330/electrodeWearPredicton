@@ -45,10 +45,8 @@ while 1
             break % 此处可替换成return
         end
         c.processDepth=c.processDepth-c.grid;
-        [height_t,wide_t]=size(matrix_t);%待修正
-        matrix_t=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));%待修正
         startRow=startRow+1;
-        matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;%待修正
+        [ matrix ] = refreshModelMatrix( matrix,matrix_t,[startRow,startCol] );
         return
     end
     toc

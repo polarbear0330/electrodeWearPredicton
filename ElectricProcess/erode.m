@@ -27,15 +27,14 @@ end
 %石墨电极蚀除
 if(toolSparkP(1)~=-1)
     r=round(rt);
-    [height_t,wide_t]=size(matrix_t);%待修正
     toolSparkP=toolSparkP-[startRow,startCol]+[1,1];
     [ matrix_t ] = partErode( matrix_t,r,toolSparkP );
     
 %     size(matrix_t)
 %     test=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
 %     [test1,test2]=size(test)
-    
-    matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;%待修正
+
+    [ matrix ] = refreshModelMatrix( matrix,matrix_t,[startRow,startCol] );
 end
 end
 

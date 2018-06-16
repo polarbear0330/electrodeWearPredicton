@@ -17,7 +17,7 @@ catch
     count=0;
 end
 
-while count<=210
+while count<=20
     count=count+1
     try
         % 电加工仿真 electric process simulation
