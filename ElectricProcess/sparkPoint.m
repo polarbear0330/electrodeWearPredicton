@@ -62,6 +62,7 @@ length2=possibleSparks(row,1).^2 + possibleSparks(row,2).^2;
 sparkPos=row(sparkPos);
 sparkPos=rowH(sparkPos);
 point=[m(sparkPos),n(sparkPos)];
+% minLen
 
 if(minLen>sparkDist*3)
     point=[-1,-1];

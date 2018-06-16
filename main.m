@@ -17,11 +17,11 @@ catch
     count=0;
 end
 
-while 1
+while count<=210
     count=count+1
     try
         % 电加工仿真 electric process simulation
-        [ matrix,startRow,conf,errCode ] = runElectricProcess(matrix,matrix_t,startRow,startCol,conf);
+        [ matrix,matrix_t,startRow,conf,errCode ] = runElectricProcess(matrix,matrix_t,startRow,startCol,conf);
     catch exception
         save;
         errCode=1;

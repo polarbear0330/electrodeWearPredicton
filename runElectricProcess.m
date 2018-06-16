@@ -1,4 +1,4 @@
-function [ matrix,startRow,c,errCode ] = runElectricProcess( matrix,matrix_t,startRow,startCol,c )
+function [ matrix,matrix_t,startRow,c,errCode ] = runElectricProcess( matrix,matrix_t,startRow,startCol,c )
 %RUNPROCESS One Cycle
 %   all process simulation
 errCode=0;
@@ -45,10 +45,10 @@ while 1
             break % 此处可替换成return
         end
         c.processDepth=c.processDepth-c.grid;
-        [height_t,wide_t]=size(matrix_t);
-        matrix_t=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
+        [height_t,wide_t]=size(matrix_t);%待修正
+        matrix_t=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));%待修正
         startRow=startRow+1;
-        matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;
+        matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;%待修正
         return
     end
     toc
@@ -69,7 +69,7 @@ while 1
 end
 
 disp('erode:');
-tic,[matrix] = erode(matrix,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp);toc
+tic,[matrix,matrix_t] = erode(matrix,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp,matrix_t,startRow,startCol);toc
 
 
 
