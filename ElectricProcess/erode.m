@@ -1,4 +1,4 @@
-function [ matrix,matrix_t ] = erode( matrix,rt,rw,toolSparkP,workSparkP,matrix_t,startRow,startCol )
+function [ matrix,matrix_t,matrix_w ] = erode( matrix,matrix_t,matrix_w,rt,rw,toolSparkP,workSparkP,start_tool,start_workp )
 %ERODE 放电蚀除
 %   输入：
 % matrix - 完整矩阵，
@@ -17,24 +17,24 @@ function [ matrix,matrix_t ] = erode( matrix,rt,rw,toolSparkP,workSparkP,matrix_
 %工件蚀除, 并防止先交于workp后交于一个错误的不在tool上的点
 if(workSparkP(1)~=-1)
     r=round(rw);
-    [ matrix ] = partErode( matrix,r,workSparkP );
+    workSparkP=workSparkP-start_workp+[1,1];
+    [ matrix_w ] = partErode( matrix_w,r,workSparkP );
 end
 if(toolSparkP(1)~=-1)
     r=round(rw);
-    [ matrix ] = partErode( matrix,r,toolSparkP );
+    workSparkP=toolSparkP-start_workp+[1,1];
+    [ matrix_w ] = partErode( matrix_w,r,workSparkP );
 end
 
 %石墨电极蚀除
 if(toolSparkP(1)~=-1)
     r=round(rt);
-    toolSparkP=toolSparkP-[startRow,startCol]+[1,1];
+    toolSparkP=toolSparkP-start_tool+[1,1];
     [ matrix_t ] = partErode( matrix_t,r,toolSparkP );
-    
-%     size(matrix_t)
-%     test=matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
-%     [test1,test2]=size(test)
+end
 
-    [ matrix ] = refreshModelMatrix( matrix,matrix_t,[startRow,startCol] );
+if(toolSparkP(1)~=-1 || workSparkP(1)~=-1)
+    [ matrix ] = refreshModelMatrix( matrix,matrix_t,matrix_w,start_tool,start_workp );
 end
 end
 

@@ -1,4 +1,4 @@
-function [ matrix,matrix_t,startRow,c,errCode ] = runElectricProcess( matrix,matrix_t,startRow,startCol,c )
+function [ matrix,matrix_t,start_tool,matrix_w,start_workp,c,errCode ] = runElectricProcess( matrix,matrix_t,start_tool,matrix_w,start_workp,c )
 %RUNPROCESS One Cycle
 %   all process simulation
 errCode=0;
@@ -45,8 +45,8 @@ while 1
             break % 此处可替换成return
         end
         c.processDepth=c.processDepth-c.grid;
-        startRow=startRow+1;
-        [ matrix ] = refreshModelMatrix( matrix,matrix_t,[startRow,startCol] );
+        start_tool(1)=start_tool(1)+1;
+        [ matrix ] = refreshModelMatrix( matrix,matrix_t,matrix_w,start_tool,start_workp );
         return
     end
     toc
@@ -67,7 +67,7 @@ while 1
 end
 
 disp('erode:');
-tic,[matrix,matrix_t] = erode(matrix,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp,matrix_t,startRow,startCol);toc
+tic,[matrix,matrix_t,matrix_w] = erode(matrix,matrix_t,matrix_w,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp,start_tool,start_workp);toc
 
 
 

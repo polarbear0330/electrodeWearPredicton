@@ -1,4 +1,4 @@
-function [ matrix,startRow,startCol ] = initModelMatrix( matrix_t,matrix_w,gap,wideRatio )
+function [ matrix,start_tool,start_workp ] = initModelMatrix( matrix_t,matrix_w,gap,wideRatio )
 %INITMODELMATRIX 均匀网格，几何建模，矩阵matrix
 %   此处显示详细说明
 
@@ -22,6 +22,7 @@ right_w=zeros(height_w, wide - wide_w - wide_left_w);
 
 workp=[left_w, matrix_w, right_w];
 gapAndTool=zeros(gap+height_t, wide);
+start_workp=[gap+height_t+1,wide_left_w+1];
 % height=height_t+gap+height_w;
 % matrix=zeros(height,wide);
 matrix=[gapAndTool; workp];
@@ -31,6 +32,7 @@ matrix([1,end],:)=1;
 %tool给matrix赋值1
 startRow=1;
 startCol=floor((wide-size(matrix_t,2))/2)+1;
+start_tool=[startRow,startCol];
 
 matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;
 end

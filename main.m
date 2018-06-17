@@ -12,16 +12,16 @@ catch
     grid=conf.grid;
     matrix_t=ones(25000/grid,10000/grid); % 25mm * 10mm
     matrix_w=ones(5000/grid,20000/grid);
-    [ matrix,startRow,startCol ] = initModelMatrix( matrix_t,matrix_w,conf.sparkDist/grid,conf.wideRatio );
+    [ matrix,start_tool,start_workp ] = initModelMatrix( matrix_t,matrix_w,conf.sparkDist/grid,conf.wideRatio );
     % runElectricProcess 执行次数，约等于放电次数
     count=0;
 end
 
-while count<=20
+while count<=10
     count=count+1
     try
         % 电加工仿真 electric process simulation
-        [ matrix,matrix_t,startRow,conf,errCode ] = runElectricProcess(matrix,matrix_t,startRow,startCol,conf);
+        [ matrix,matrix_t,start_tool,matrix_w,start_workp,conf,errCode ] = runElectricProcess(matrix,matrix_t,start_tool,matrix_w,start_workp,conf);
     catch exception
         save;
         errCode=1;
