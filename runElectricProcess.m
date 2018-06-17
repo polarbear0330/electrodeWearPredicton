@@ -45,7 +45,9 @@ while 1
             break % 此处可替换成return
         end
         c.processDepth=c.processDepth-c.grid;
-        start_tool(1)=start_tool(1)+1;
+%         start_tool(1)=start_tool(1)+1;
+        newline=ones(1,size(matrix_t,2));
+        matrix_t=[newline;matrix_t];
         [ matrix ] = refreshModelMatrix( matrix,matrix_t,matrix_w,start_tool,start_workp );
         return
     end

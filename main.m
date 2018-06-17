@@ -17,7 +17,7 @@ catch
     count=0;
 end
 
-while count<=100
+while count<=200
     count=count+1
     try
         % 电加工仿真 electric process simulation
@@ -40,7 +40,7 @@ end
 % ----------------------------------end------------------------------------
 
 save;
-
+fprintf(1, '\n currentDepth = %d \n\n', conf.processDepth);
 
 
 % ---------------------------display_result--------------------------------
