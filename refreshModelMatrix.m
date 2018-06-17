@@ -22,9 +22,9 @@ startRow=origin_start(1);
 startCol=origin_start(2);
 [height_t,wide_t]=size(part);
 
-% 改成只=1时，赋值，否则不赋值，防止0赋值错误
-whole(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=part;
-% pos= find(part==1);
-% pos
-% prevPart=whole(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1));
+% 只=1时，赋值1，否则不赋值，防止0错误覆盖了1
+pos= part==1;
+part=whole(startRow:(height_t+startRow-1), startCol:(wide_t+startCol-1));
+part(pos)=1;
+whole(startRow:(height_t+startRow-1), startCol:(wide_t+startCol-1))=part;
 end
