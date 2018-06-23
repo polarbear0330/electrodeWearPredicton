@@ -17,7 +17,7 @@ catch
     count=0;
 end
 
-while count<=200
+while count==1001
     count=count+1
     try
         % 电加工仿真 electric process simulation
@@ -39,7 +39,9 @@ while count<=200
 end
 % ----------------------------------end------------------------------------
 
-save;
+% save;
+% curFileName=['matlab',num2str(count),'.mat'];
+% save(curFileName);
 fprintf(1, '\n currentDepth = %d \n\n', conf.processDepth);
 
 
