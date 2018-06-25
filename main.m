@@ -17,7 +17,7 @@ catch
     count=0;
 end
 
-while count==1001
+while count==651
     count=count+1
     try
         % 电加工仿真 electric process simulation
@@ -54,3 +54,16 @@ if (conf.showFlag == 'onlyReslt')
 end
 toc
 % -------------------------------------------------------------------------
+
+
+% 后处理
+% whole=matrix;
+% tool=matrix_t;
+% workp=matrix_w;
+% tool(:)=0;
+% [ whole ] = refreshModelMatrix( whole,tool,workp,start_tool,start_workp );
+% figure(11);
+% imshow(whole,'InitialMagnification','fit')
+% title('蚀除结果');
+
+

@@ -73,9 +73,12 @@ if (showFlag == 'showImage')
     axis equal
     
     figure(4);
-    % subplot(1,2,1), pdeplot(model,'XYData',u,'Mesh','off');
+    % subplot(1,2,1), 
     % subplot(1,2,2), 
     pdeplot(model,'XYData',absE,'Mesh','off');
+    axis equal
+    figure(6);
+    pdeplot(model,'XYData',u,'Mesh','off');
     axis equal
 end
 
