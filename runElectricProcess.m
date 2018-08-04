@@ -20,21 +20,22 @@ showFlag=c.showFlag;
 % 【蚀除】
 % （输入：完整矩阵，两放点电，两蚀坑半径；输出：完整矩阵）
 
-
+% -------------------------------------------------------------------------
 disp('boundary trace:');
 tic,[m,n] = boundaryTrace(matrix, showFlag);toc
-
+% -------------------------------------------------------------------------
 disp('combine pts to edge:');
 tic,[edgePoints,edgeNums] = pdeEdgeGeom( m,n,c.origin_left_up,c.grid );toc
-
+% -------------------------------------------------------------------------
 
 while 1    
+% -------------------------------------------------------------------------
     fprintf(2,'calculate E: \n');
     tic,
     % [~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,3-errorCount,showFlag);
     [maxAbsE,maxPoint,maxE] = electrostaticPDEmodel(edgePoints,edgeNums,3-errorCount,showFlag);
     toc
-    
+% -------------------------------------------------------------------------
     disp('feed:');
     tic,
     if(maxAbsE < c.breakE)
@@ -54,13 +55,13 @@ while 1
         return
     end
     toc
-    
+% -------------------------------------------------------------------------
     disp('spark point:');
     tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
-    
+% -------------------------------------------------------------------------
     % 放电点无误 或 达到允许的错误次数上限，则break
     if(errCode_sparkPts==0 || errorCount<=0)
-%         errorCount
+    % errorCount
         break;
     elseif(errorCount==1)
         errorCount
@@ -69,10 +70,14 @@ while 1
     
     errorCount=errorCount-1;
 end
-
+% -------------------------------------------------------------------------
 disp('erode:');
-tic,[matrix,matrix_t,matrix_w] = erode(matrix,matrix_t,matrix_w,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp,start_tool,start_workp);toc
-
+tic,
+[matrix,matrix_t,matrix_w] = erode(matrix,matrix_t,matrix_w,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp,start_tool,start_workp);
+[ matrix_t ] = debrisRemove( matrix_t );
+[ matrix_w ] = debrisRemove( matrix_w );
+toc
+% -------------------------------------------------------------------------
 
 
 %展示单步结果

@@ -3,7 +3,7 @@ function [ config ] = loadConfig( )
 %   load config, parameters
 
 %加工深度
-c.processDepth=2000;
+c.processDepth=5000;
 
 
 %grid：微米；
