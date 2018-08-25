@@ -27,7 +27,9 @@ tic,[m,n] = boundaryTrace(matrix, showFlag);toc
 disp('combine pts to edge:');
 tic,[edgePoints,edgeNums] = pdeEdgeGeom( m,n,c.origin_left_up,c.grid );toc
 % -------------------------------------------------------------------------
-
+edgeNums
+edgePoints
+% [ edgePoints ] = rotateC( edgePoints,edgeNums, angleC, originC );
 while 1    
 % -------------------------------------------------------------------------
     fprintf(2,'calculate E: \n');
