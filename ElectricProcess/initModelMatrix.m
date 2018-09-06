@@ -1,4 +1,4 @@
-function [ matrix,start_tool,start_workp ] = initModelMatrix( matrix_t,matrix_w,gap,wideRatio )
+function [ vertexes4,start_tool,matrix_t,start_workp,matrix_w ] = initModelMatrix( matrix_t,matrix_w,gap,wideRatio )
 %INITMODELMATRIX 均匀网格，几何建模，矩阵matrix
 %   此处显示详细说明
 
@@ -6,6 +6,8 @@ function [ matrix,start_tool,start_workp ] = initModelMatrix( matrix_t,matrix_w,
 % matrix_w=ones(4,10);
 % gap=4;
 % wideRatio=1.5;
+[matrix_t] = surroundBy0(matrix_t);
+[matrix_w] = surroundBy0(matrix_w);
 
 [height_t,wide_t]=size(matrix_t);
 [height_w,wide_w]=size(matrix_w);
@@ -14,27 +16,43 @@ if(wide_t>=wide_w)
     disp("Error: wide_tool >= wide_workpiece");
 end
 wideMax=max(wide_t,wide_w);
+
 wide=wideMax*wideRatio;
+height=height_t+gap+height_w;
+vertexes4 = [
+1 wide
+height wide
+height 1
+1 1
+];
 
+% workp
 wide_left_w=floor((wideRatio-1)*wide_w/2);
-left_w=zeros(height_w, wide_left_w);
-right_w=zeros(height_w, wide - wide_w - wide_left_w);
+start_workp=[gap+height_t+1,wide_left_w+1];  %左上角的0
 
-workp=[left_w, matrix_w, right_w];
-gapAndTool=zeros(gap+height_t, wide);
-start_workp=[gap+height_t+1,wide_left_w+1];
-% height=height_t+gap+height_w;
-% matrix=zeros(height,wide);
-matrix=[gapAndTool; workp];
-matrix(:,[1,end])=1;
-matrix([1,end],:)=1;
-
-%tool给matrix赋值1
+% tool
 startRow=1;
 startCol=floor((wide-size(matrix_t,2))/2)+1;
-start_tool=[startRow,startCol];
+start_tool=[startRow,startCol];  %左上角的0
 
-matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;
+% 以下用于图形化展示总matrix
+% gapAndTool=zeros(gap+height_t, wide);
+% left_w=zeros(height_w, wide_left_w);
+% right_w=zeros(height_w, wide - wide_w - wide_left_w);
+% workp=[left_w, matrix_w, right_w];
+% matrix=[gapAndTool; workp];
+% matrix(startRow:height_t+startRow-1, startCol:(wide_t+startCol-1))=matrix_t;
+% matrix(:,[1,end])=1;
+% matrix([1,end],:)=1
+end
+
+function [matrix] = surroundBy0(matrix)
+[~,wide]=size(matrix);
+row0s=zeros(1,wide);
+matrix=[row0s;matrix;row0s];
+[height,~]=size(matrix);
+col0s=zeros(height,1);
+matrix=[col0s,matrix,col0s];
 end
 
 % % 测试model

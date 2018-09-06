@@ -1,4 +1,4 @@
-function [ matrix,matrix_t,start_tool,matrix_w,start_workp,c,errCode ] = runElectricProcess( matrix,matrix_t,start_tool,matrix_w,start_workp,c )
+function [ matrix_t,start_tool,matrix_w,start_workp,c,errCode ] = runElectricProcess( vertexes4,matrix_t,start_tool,matrix_w,start_workp,c )
 %RUNPROCESS One Cycle
 %   all process simulation
 errCode=0;
@@ -22,14 +22,19 @@ showFlag=c.showFlag;
 
 % -------------------------------------------------------------------------
 disp('boundary trace:');
-tic,[m,n] = boundaryTrace(matrix, showFlag);toc
+tic,
+[mnPoints_t] = boundaryTrace(matrix_t, showFlag, "tool");
+[mnPoints_w] = boundaryTrace(matrix_w, showFlag, "workpiece");
+toc
 % -------------------------------------------------------------------------
-disp('combine pts to edge:');
-tic,[edgePoints,edgeNums] = pdeEdgeGeom( m,n,c.origin_left_up,c.grid );toc
+disp('model transform:');
+tic,
+[ edgePoints,edgeNums ] = erodeModel2ElectricModel( vertexes4,mnPoints_t,mnPoints_w,c.origin_left_up,c.grid );
+toc
 % -------------------------------------------------------------------------
 edgeNums
 edgePoints
-% [ edgePoints ] = rotateC( edgePoints,edgeNums, angleC, originC );
+
 while 1    
 % -------------------------------------------------------------------------
     fprintf(2,'calculate E: \n');
@@ -50,16 +55,15 @@ while 1
             break % 此处可替换成return
         end
         c.processDepth=c.processDepth-c.grid;
-%         start_tool(1)=start_tool(1)+1;
         newline=ones(1,size(matrix_t,2));
         matrix_t=[newline;matrix_t];
-        [ matrix ] = refreshModelMatrix( matrix,matrix_t,matrix_w,start_tool,start_workp );
+%         [ matrix ] = refreshModelMatrix( matrix,matrix_t,matrix_w,start_tool,start_workp );
         return
     end
     toc
 % -------------------------------------------------------------------------
     disp('spark point:');
-    tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(m,n,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
+    tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(mnPoints_t,mnPoints_w,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
 % -------------------------------------------------------------------------
     % 放电点无误 或 达到允许的错误次数上限，则break
     if(errCode_sparkPts==0 || errorCount<=0)
@@ -75,7 +79,7 @@ end
 % -------------------------------------------------------------------------
 disp('erode:');
 tic,
-[matrix,matrix_t,matrix_w] = erode(matrix,matrix_t,matrix_w,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp,start_tool,start_workp);
+[matrix_t,matrix_w] = erode(matrix_t,matrix_w,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp,start_tool,start_workp);
 [ matrix_t ] = debrisRemove( matrix_t );
 [ matrix_w ] = debrisRemove( matrix_w );
 toc

@@ -16,17 +16,17 @@ catch
 %     tip=[tipLeft,fliplr(tipLeft)];
 %     matrix_t(end-tipLen+1:end,:)=tip;
     matrix_w=ones(10000/grid,20000/grid);
-    [ matrix,start_tool,start_workp ] = initModelMatrix( matrix_t,matrix_w,conf.sparkDist/grid,conf.wideRatio );
+    [ vertexes4,start_tool,matrix_t,start_workp,matrix_w ] = initModelMatrix( matrix_t,matrix_w,conf.sparkDist/grid,conf.wideRatio );
     % runElectricProcess 执行次数，约等于放电次数
     count=0;
-    imshow(matrix,'InitialMagnification','fit');
+%     imshow(matrix,'InitialMagnification','fit');
 end
 
 while count<=0
     count=count+1
     try
         % 电加工仿真 electric process simulation
-        [ matrix,matrix_t,start_tool,matrix_w,start_workp,conf,errCode ] = runElectricProcess(matrix,matrix_t,start_tool,matrix_w,start_workp,conf);
+        [ matrix_t,start_tool,matrix_w,start_workp,conf,errCode ] = runElectricProcess(vertexes4,matrix_t,start_tool,matrix_w,start_workp,conf);
     catch exception
         save;
         errCode=1;

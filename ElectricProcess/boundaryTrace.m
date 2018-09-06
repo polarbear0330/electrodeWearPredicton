@@ -16,7 +16,7 @@
 % f=[h1; t; spark; w; h1];
 % mode="all";
     %%%%%%%%%  下面是显示边界跟踪的子函数  %%%%%%%%%    
-function [m,n]=boundaryTrace(matrix, showFlag)
+function [mnPoints]=boundaryTrace(matrix, showFlag, mode)
 % function g=boundary_trace(f) 跟踪目标的外边界，f位输入的二值图像，g为输出的二值图像
 offsetr=[-1, 0 ,1 ,0];
 offsetc=[0, 1, 0 ,-1];
@@ -25,17 +25,16 @@ next_search_dir_table=[2,3,4,1]; %遇到1后，下一个方向（顺，右转）
 start=-1;
 boundary=-2;
 % 找出起始点
-mode="all";
-if (mode=="workpiece")%注：find函数只记录符合条件的结果中的最后一个结果，可优化！！！
-    [rv,cv]=find( (matrix(2:end-1,:)>0) & (matrix(1:end-2,:)==0) );
-    rv=rv+1;
-elseif (mode=="tool")%终止位置的选择，要比工件高，才能选到tool。此处固定了find终止位置
-    [rv,cv]=find( (matrix(2:15,:)>0) & (matrix(1:14,:)==0) );
-    rv=rv+1;
-elseif (mode == 'all')
-    [rv,cv]=find( (matrix(2,1:end-2)==0) & (matrix(2,2:end-1)>0) ,1);
-%     rv=rv;%rv=1
+% mode="all";
+if (mode=="workpiece")
+    [~,cv]=find( (matrix(end-1,1:end-1)==1) & (matrix(end-1,2:end)==0) );
+    rv=size(matrix,1)-1;
+    next_dir=1;  % 初始方向
+elseif (mode=="tool")
+    [~,cv]=find( (matrix(2,1:end-1)==0) & (matrix(2,2:end)>0) ,1);
+    rv=2;
     cv=cv+1;
+    next_dir=3;  % 初始方向
 end
 startr=rv(1);
 startc=cv(1);
@@ -44,7 +43,7 @@ matrix(startr,startc)=start;
 cur_p=[startr,startc];
 init_departure_dir=-1;
 done=0;
-next_dir=3;  % 初始方向
+
 %预分配内存优化
 m=[startr];
 n=[startc];
@@ -82,6 +81,8 @@ end
 % % matrix(startr,startc)
 % bi=find(matrix==boundary);
 % [m,n]=ind2sub(size(matrix),bi);
+mnPoints = [m, n];
+
 
 %     tic,
 if (showFlag == 'showImage')
@@ -94,5 +95,6 @@ if (showFlag == 'showImage')
     imshow(matrix,'InitialMagnification','fit')
     title('四连通边界跟踪结果');
 
+end
 end
 %     toc
