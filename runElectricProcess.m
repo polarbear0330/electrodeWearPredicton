@@ -29,12 +29,12 @@ toc
 % -------------------------------------------------------------------------
 disp('model transform:');
 tic,
-[ edgePoints,edgeNums ] = erodeModel2ElectricModel( vertexes4,mnPoints_t,mnPoints_w,c.origin_left_up,c.grid );
+[ edgePoints,edgeNums ] = erodeModel2ElectricModel( vertexes4,mnPoints_t,mnPoints_w,start_tool,start_workp,c.origin_left_up,c.grid );
 toc
 % -------------------------------------------------------------------------
-edgeNums
-edgePoints
-
+angleC = 0.5;
+originC = [0, 0];
+[ edgePoints ] = rotateC( edgePoints,edgeNums, angleC, originC );
 while 1    
 % -------------------------------------------------------------------------
     fprintf(2,'calculate E: \n');

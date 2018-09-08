@@ -1,14 +1,16 @@
-function [ edgePoints,edgeNums ] = pdeEdgeGeom( m,n,origin_left_up,grid )
+function [ edgePoints,edgeNums ] = pdeEdgeGeom( mnPoints,start,origin_left_up,grid )
 %PDEEDGEGEOM edges生成、pde的boundary condition预处理
 % 1.矩阵点连接成边，相同斜率的边是同一个边
 % 2.所有边内缩
 % 3.输出：带有边界条件的边edges的编号序列、edges顶点
 
+m=mnPoints(:,1);
+n=mnPoints(:,2);
 
 %坐标系变换
 origin=origin_left_up+[grid/2,-grid/2];
-x=(n-1)*grid+origin(1);
-y=(m-1)*grid*(-1)+origin(2);
+x=(n-1)*grid + start(1) + origin(1);
+y=(m-1)*grid*(-1) + start(2) + origin(2);
 
 [prePoints,edgeNums] = boundaryPts2Edges (x,y);
 [edgePoints] = insideOffsetProcess (prePoints,grid);

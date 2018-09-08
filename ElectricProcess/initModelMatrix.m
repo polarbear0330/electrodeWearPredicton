@@ -1,11 +1,16 @@
-function [ vertexes4,start_tool,matrix_t,start_workp,matrix_w ] = initModelMatrix( matrix_t,matrix_w,gap,wideRatio )
+function [ vertexes4,start_tool,matrix_t,start_workp,matrix_w ] = initModelMatrix( matrix_t,matrix_w,conf )
 %INITMODELMATRIX 均匀网格，几何建模，矩阵matrix
 %   此处显示详细说明
 
 % matrix_t=ones(8,4);
 % matrix_w=ones(4,10);
-% gap=4;
-% wideRatio=1.5;
+% % gap=3;
+% % wideRatio=1.5;
+
+grid = conf.grid;
+gap=conf.sparkDist/grid;
+wideRatio=conf.wideRatio;
+
 [matrix_t] = surroundBy0(matrix_t);
 [matrix_w] = surroundBy0(matrix_w);
 
@@ -20,20 +25,22 @@ wideMax=max(wide_t,wide_w);
 wide=wideMax*wideRatio;
 height=height_t+gap+height_w;
 vertexes4 = [
-1 wide
-height wide
-height 1
-1 1
-];
+wide*grid 0
+wide*grid -height*grid
+0 -height*grid
+0 0
+]';%注意这个转置咯！
 
-% workp
+% workp -- xy
 wide_left_w=floor((wideRatio-1)*wide_w/2);
 start_workp=[gap+height_t+1,wide_left_w+1];  %左上角的0
+start_workp=[(start_workp(2)-1), -(start_workp(1)-1)]*grid;
 
-% tool
+% tool -- xy
 startRow=1;
 startCol=floor((wide-size(matrix_t,2))/2)+1;
 start_tool=[startRow,startCol];  %左上角的0
+start_tool=[(start_tool(2)-1), -(start_tool(1)-1)]*grid;
 
 % 以下用于图形化展示总matrix
 % gapAndTool=zeros(gap+height_t, wide);
