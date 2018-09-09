@@ -63,7 +63,14 @@ while 1
     toc
 % -------------------------------------------------------------------------
     disp('spark point:');
-    tic,[sparkpoint_tool,sparkpoint_workp,errCode_sparkPts] = sparkPoint(mnPoints_t,mnPoints_w,maxPoint',maxE,maxAbsE,c.grid,c.origin_left_up,c.sparkDist);toc
+    tic,
+    [sparkpoint_workp,errCode_sparkPts1] = sparkPoint(mnPoints_w,start_workp,maxPoint',maxE,maxAbsE,c);
+    % 工具电极在“电场模型”中发生了旋转，此处反向旋转场强矢量E，使得E与“蚀除模型”的工具电极处在同一坐标系下
+    [ maxPoint_t ] = rotateC( maxPoint,[1], -angleC, originC );
+    [ maxE_t ] = rotateC( maxE,[1], -angleC, originC );
+    [sparkpoint_tool,errCode_sparkPts2] = sparkPoint(mnPoints_t,start_tool,maxPoint_t',maxE_t,maxAbsE,c);
+    errCode_sparkPts = errCode_sparkPts1 & errCode_sparkPts2;
+    toc
 % -------------------------------------------------------------------------
     % 放电点无误 或 达到允许的错误次数上限，则break
     if(errCode_sparkPts==0 || errorCount<=0)
