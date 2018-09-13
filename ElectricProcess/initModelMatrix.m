@@ -9,6 +9,7 @@ function [ vertexes4,start_tool,matrix_t,start_workp,matrix_w ] = initModelMatri
 
 grid = conf.grid;
 gap=conf.sparkDist/grid;
+gap=1
 wideRatio=conf.wideRatio;
 
 [matrix_t] = surroundBy0(matrix_t);

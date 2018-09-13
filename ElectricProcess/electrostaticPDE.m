@@ -54,7 +54,7 @@ if (showFlag == 'showImage')
     axis equal
     
     figure(4);
-    pdeplot(p,e,t,'XYData',u)
+    pdeplot(p,e,t,'XYData',u,'ColorMap','jet')
     axis equal
 end
 
@@ -76,13 +76,41 @@ xpts = (point(1,it1) + point(1,it2) + point(1,it3))/3;
 ypts = (point(2,it1) + point(2,it2) + point(2,it3))/3;
 points_E = [xpts;ypts];
 
-% figure(4);
-% pdeplot(points_E,e,t,'XYData',EE)
-
 %向量E起点
 point_max = points_E(:,pos);
 %向量E
 maxE = E(:,pos);
 
+if (showFlag == 'showImage')
+    X=xpts';
+    Y=ypts';
+    Z=EE';
+    figure(5);
+    tri=delaunay(X,Y); %将散点划分为平面三角形网格
+    patch('Faces',tri,'Vertices',[X,Y],'FaceVertexCData',Z,...
+        'FaceColor','interp','EdgeColor','none');colorbar;
+    title('散点数据原始图像');
+%     %查看网格
+%     figure(15);
+%     trimesh(tri,X,Y);
+    
+    figure(7);
+    % seg=max(size(X,1), size(Y,1))
+    XI=linspace(min(X),max(X),500); %根据需要将X划分为m分
+    YI=linspace(min(Y),max(Y),500); %根据需要将Y划分为n分
+    ZI=griddata(X,Y,Z,XI,YI.'); %最后ZI是个nxm的矩阵
+    imagesc(XI,YI,ZI);colorbar; %使用imagesc将矩阵画成图像
+    title('不规则散点数据插值后的规则二维网格图像');
+    
+    figure(8);
+    pdeplot(p,e,t,'FlowData',[Ex;Ey]);
+    
+    figure(9);%注：此种方式画出的图形，是经过了低精度插值处理后的图形
+    pdeplot(p,e,t,'XYData',EE,'ColorMap','jet');
+    
+    % figure(5);wrong!
+    % surf(xpts, ypts, EE)
+    % pdeplot(points_E,e,tri,'XYData',EE)
+end
 end
 

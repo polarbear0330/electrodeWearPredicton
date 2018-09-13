@@ -21,7 +21,7 @@ function [ sparkpoint,errCode ] = sparkPoint( mnPoints,start,pointE,E,absE,conf)
 %(删)向量分组，指向tool和workpiece向量夹角约为180°，这里以90°作为判断条件,即><0
 %计算向量大小，最短向量对应放电点
 
-%防错验证：distance < 常规放电间距 * 经验系数(如：2)
+%防错验证：distance < 常规放电间距 * 经验系数 (如：2)
 % sparkPoint=[0;0];
 
 grid=conf.grid;
@@ -50,7 +50,7 @@ if size(rowH,2)==0
     errCode=1;
     return;
 end
-possibleSparks=sparks(rowH,:);
+possibleSparks=sparks(rowH,:)
 % %向量分组，区分出指向tool的和workpiece的
 % %cosAngle分别><0，cos(90°)=0,实际夹角为180°左右
 % firstSparkVec=possibleSparks(1,:);

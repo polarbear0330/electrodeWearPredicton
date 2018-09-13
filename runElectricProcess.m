@@ -32,14 +32,14 @@ tic,
 [ edgePoints,edgeNums ] = erodeModel2ElectricModel( vertexes4,mnPoints_t,mnPoints_w,start_tool,start_workp,c.origin_left_up,c.grid );
 toc
 % -------------------------------------------------------------------------
-angleC = 0.5;
+angleC = 0;
 originC = [0, 0];
-[ edgePoints ] = rotateC( edgePoints,edgeNums, angleC, originC );
-while 1    
+[ edgePoints ] = rotateC( edgePoints,[edgeNums,edgeNums(end)+1], angleC, originC );%假设tool有3个边，则有3+1=4个顶点需要旋转
+while 1
 % -------------------------------------------------------------------------
     fprintf(2,'calculate E: \n');
     tic,
-    % [~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,3-errorCount,showFlag);
+%     [~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,3-errorCount,showFlag);
     [maxAbsE,maxPoint,maxE] = electrostaticPDEmodel(edgePoints,edgeNums,3-errorCount,showFlag);
     toc
 % -------------------------------------------------------------------------
@@ -86,7 +86,9 @@ end
 % -------------------------------------------------------------------------
 disp('erode:');
 tic,
-[matrix_t,matrix_w] = erode(matrix_t,matrix_w,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp,start_tool,start_workp);
+[matrix_t] = erode(matrix_t,c.rt,sparkpoint_tool);
+[matrix_w] = erode(matrix_w,c.rw,sparkpoint_workp);
+% [matrix_t,matrix_w] = erode(matrix_t,matrix_w,c.rt,c.rw,sparkpoint_tool,sparkpoint_workp,start_tool,start_workp);
 [ matrix_t ] = debrisRemove( matrix_t );
 [ matrix_w ] = debrisRemove( matrix_w );
 toc
@@ -94,10 +96,9 @@ toc
 
 
 %展示单步结果
+matrix=matrix_t;
 if (showFlag == 'showImage' | showFlag=='stepReslt')
-    tic,
     disp('result pic:');
-    toc
     tic,
     figure(5);
     imshow(matrix,'InitialMagnification','fit')

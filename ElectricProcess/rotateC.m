@@ -17,7 +17,7 @@ function [ edgePoints ] = rotateC( edgePoints,edgeNums, angleC, originC )
 % % edgeNums = [1, 2];
 
 angleC = angleC / pi;
-for i=[edgeNums,edgeNums(end)+1]%假设tool有3个边，则有3+1=4个顶点需要旋转
+for i=edgeNums
     delta_x = edgePoints(1,i)-originC(1);
     delta_y = edgePoints(2,i)-originC(2);
     length = sqrt(delta_x^2 + delta_y^2);

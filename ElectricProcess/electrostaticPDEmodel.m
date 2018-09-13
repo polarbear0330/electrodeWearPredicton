@@ -54,6 +54,11 @@ results = solvepde(model);
 u = results.NodalSolution;
 
 %------------------E-------------------------------------------------------
+
+% % 计算出的E经过了插值处理，略微有一点点不准确。
+% % 即，能体现尖端放电，只是放电点的位置有较小的误差
+% % 可能原因分析：matlab自带函数的插值做得太粗略了，间隔过大。
+
 absE=sqrt(results.XGradients.^2 + results.YGradients.^2);
 [max_absE,pos] = max(absE,[],1);%dim=2：每一列的最大值
 %向量E起点
@@ -75,10 +80,10 @@ if (showFlag == 'showImage')
     figure(4);
     % subplot(1,2,1), 
     % subplot(1,2,2), 
-    pdeplot(model,'XYData',absE,'Mesh','off');
+    pdeplot(model,'XYData',absE,'Mesh','off','ColorMap','jet');
     axis equal
     figure(6);
-    pdeplot(model,'XYData',u,'Mesh','off');
+    pdeplot(model,'XYData',u,'Mesh','off','ColorMap','jet');
     axis equal
 end
 

@@ -15,7 +15,7 @@ catch
 %     tipLeft=triu(ones(tipLen,tipLen),0);
 %     tip=[tipLeft,fliplr(tipLeft)];
 %     matrix_t(end-tipLen+1:end,:)=tip;
-    matrix_w=ones(10000/grid,20000/grid);
+    matrix_w=ones(5000/grid,20000/grid);
     [ vertexes4,start_tool,matrix_t,start_workp,matrix_w ] = initModelMatrix( matrix_t,matrix_w,conf );
     % runElectricProcess 执行次数，约等于放电次数
     count=0;
@@ -54,7 +54,7 @@ end
 tic,
 if (conf.showFlag == 'onlyReslt')
     figure(10);
-    imshow(matrix,'InitialMagnification','fit')
+    imshow(matrix_w,'InitialMagnification','fit')
     title('蚀除结果');
 end
 toc
