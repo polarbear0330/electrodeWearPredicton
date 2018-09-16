@@ -44,13 +44,14 @@ nE=[-E(2);E(1)]/absE;
 H=abs(sparks*nE);
 %可能的放电点，对应多个向量
 [rowH,~]=find(H<=grid/2);
-%若场强E误差过大，没有相较于任何点
-if size(rowH,2)==0
-    sparkpoint=[-1,-1];
+%若场强E误差过大，没有相交于任何点
+if size(rowH,1)==0 || size(rowH,2)==0
+    sparkpoint=[-1,-1]
+    start
     errCode=1;
     return;
 end
-possibleSparks=sparks(rowH,:)
+possibleSparks=sparks(rowH,:);
 % %向量分组，区分出指向tool的和workpiece的
 % %cosAngle分别><0，cos(90°)=0,实际夹角为180°左右
 % firstSparkVec=possibleSparks(1,:);

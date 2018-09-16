@@ -16,17 +16,21 @@ catch
 %     tip=[tipLeft,fliplr(tipLeft)];
 %     matrix_t(end-tipLen+1:end,:)=tip;
     matrix_w=ones(5000/grid,20000/grid);
-    [ vertexes4,start_tool,matrix_t,start_workp,matrix_w ] = initModelMatrix( matrix_t,matrix_w,conf );
-    % runElectricProcess 执行次数，约等于放电次数
+    [ vertexes4,matrixPair,xyOriginPair ] = initModelMatrix( matrix_t,matrix_w,conf );
+    % 解析G代码
+    feedParas.codeG=[xyOriginPair.start_tool;xyOriginPair.start_tool+[100,-1000,-10]];
+    feedParas.rowG=1;
+    feedParas.increment=[0,0,0];
+    
     count=0;
 %     imshow(matrix,'InitialMagnification','fit');
 end
 
-while count<=0
+while count<=300
     count=count+1
     try
         % 电加工仿真 electric process simulation
-        [ matrix_t,start_tool,matrix_w,start_workp,conf,errCode ] = runElectricProcess(vertexes4,matrix_t,start_tool,matrix_w,start_workp,conf);
+        [ matrixPair,xyOriginPair,feedParas,conf,errCode ] = runElectricProcess(vertexes4,matrixPair,xyOriginPair,feedParas,conf);
     catch exception
         save;
         errCode=1;
@@ -35,26 +39,32 @@ while count<=0
     end
     
     % 错误处理
-    if(errCode || conf.processDepth==0)
+    if(errCode || isSamePoint(xyOriginPair.start_tool,feedParas.codeG(feedParas.rowG,:)))
         save;
-        boundaryTrace(matrix, 'showImage');
-        fprintf(2, '\n currentDepth = %d \n\n', conf.processDepth);
+        figure;
+        boundaryTrace(matrixPair.matrix_t, 'showImage', "tool");
+        figure;
+        boundaryTrace(matrixPair.matrix_w, 'showImage', "workpiece");
+        
+        fprintf(2, '\n Work Done! : \n\n');
         break;
     end
 end
 % ----------------------------------end------------------------------------
 
-% save;
-% curFileName=['withTip_noDebris/matlab',num2str(count),'.mat'];
-% save(curFileName);
+save;
+curFileName=['rotate/try/matlab',num2str(count),'.mat'];
+save(curFileName);
 % fprintf(1, '\n currentDepth = %d \n\n', conf.processDepth);
 
 
 % ---------------------------display_result--------------------------------
 tic,
 if (conf.showFlag == 'onlyReslt')
-    figure(10);
-    imshow(matrix_w,'InitialMagnification','fit')
+    figure;
+    imshow(matrixPair.matrix_t,'InitialMagnification','fit')
+    figure;
+    imshow(matrixPair.matrix_w,'InitialMagnification','fit')
     title('蚀除结果');
 end
 toc

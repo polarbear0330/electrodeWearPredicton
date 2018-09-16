@@ -91,7 +91,7 @@ if (showFlag == 'showImage')
     bi=sub2ind(size(matrix),m,n);
     matrix(bi)=1;
 %     matrix(m,n)=1;%错误
-    figure(1);
+    figure;
     imshow(matrix,'InitialMagnification','fit')
     title('四连通边界跟踪结果');
 

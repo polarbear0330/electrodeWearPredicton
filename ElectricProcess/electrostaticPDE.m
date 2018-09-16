@@ -45,15 +45,15 @@ u=assempde(b,p,e,t,1,0,0);
 
 
 if (showFlag == 'showImage')
-    figure(2);
+    figure;
     pdegplot(dl,'EdgeLabels','on','FaceLabels','on')
     axis equal
     
-    figure(3);
+    figure;
     pdemesh(p,e,t) 
     axis equal
     
-    figure(4);
+    figure;
     pdeplot(p,e,t,'XYData',u,'ColorMap','jet')
     axis equal
 end
@@ -85,7 +85,7 @@ if (showFlag == 'showImage')
     X=xpts';
     Y=ypts';
     Z=EE';
-    figure(5);
+    figure;
     tri=delaunay(X,Y); %将散点划分为平面三角形网格
     patch('Faces',tri,'Vertices',[X,Y],'FaceVertexCData',Z,...
         'FaceColor','interp','EdgeColor','none');colorbar;
@@ -94,7 +94,7 @@ if (showFlag == 'showImage')
 %     figure(15);
 %     trimesh(tri,X,Y);
     
-    figure(7);
+    figure;
     % seg=max(size(X,1), size(Y,1))
     XI=linspace(min(X),max(X),500); %根据需要将X划分为m分
     YI=linspace(min(Y),max(Y),500); %根据需要将Y划分为n分
@@ -102,10 +102,10 @@ if (showFlag == 'showImage')
     imagesc(XI,YI,ZI);colorbar; %使用imagesc将矩阵画成图像
     title('不规则散点数据插值后的规则二维网格图像');
     
-    figure(8);
+    figure;
     pdeplot(p,e,t,'FlowData',[Ex;Ey]);
     
-    figure(9);%注：此种方式画出的图形，是经过了低精度插值处理后的图形
+    figure;%注：此种方式画出的图形，是经过了低精度插值处理后的图形
     pdeplot(p,e,t,'XYData',EE,'ColorMap','jet');
     
     % figure(5);wrong!

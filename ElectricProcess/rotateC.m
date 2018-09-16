@@ -23,8 +23,8 @@ for i=edgeNums
     length = sqrt(delta_x^2 + delta_y^2);
     angleStart = atan2(delta_y, delta_x);%质点的起始角度
     angleEnd = angleC - 0 + angleStart;%该点旋转后的角度
-    edgePoints(1,i) = length * cos(angleEnd);
-    edgePoints(2,i) = length * sin(angleEnd);
+    edgePoints(1,i) = length * cos(angleEnd) + originC(1);
+    edgePoints(2,i) = length * sin(angleEnd) + originC(2);
 end
 
 end

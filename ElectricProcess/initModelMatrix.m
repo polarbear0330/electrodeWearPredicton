@@ -1,4 +1,4 @@
-function [ vertexes4,start_tool,matrix_t,start_workp,matrix_w ] = initModelMatrix( matrix_t,matrix_w,conf )
+function [ vertexes4,matrixPair,xyOriginPair ] = initModelMatrix( matrix_t,matrix_w,conf )
 %INITMODELMATRIX 均匀网格，几何建模，矩阵matrix
 %   此处显示详细说明
 
@@ -32,16 +32,24 @@ wide*grid -height*grid
 0 0
 ]';%注意这个转置咯！
 
-% workp -- xy
+% workp -- xyc
 wide_left_w=floor((wideRatio-1)*wide_w/2);
 start_workp=[gap+height_t+1,wide_left_w+1];  %左上角的0
 start_workp=[(start_workp(2)-1), -(start_workp(1)-1)]*grid;
+start_workp=[start_workp,0];
 
-% tool -- xy
+% tool -- xyc
 startRow=1;
 startCol=floor((wide-size(matrix_t,2))/2)+1;
 start_tool=[startRow,startCol];  %左上角的0
 start_tool=[(start_tool(2)-1), -(start_tool(1)-1)]*grid;
+start_tool=[start_tool,0];
+
+%写入结构体。输入输出参数分类。
+matrixPair.matrix_t=matrix_t;
+matrixPair.matrix_w=matrix_w;
+xyOriginPair.start_tool=start_tool;
+xyOriginPair.start_workp=start_workp;
 
 % 以下用于图形化展示总matrix
 % gapAndTool=zeros(gap+height_t, wide);

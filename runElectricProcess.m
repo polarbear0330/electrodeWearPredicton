@@ -1,9 +1,16 @@
-function [ matrix_t,start_tool,matrix_w,start_workp,c,errCode ] = runElectricProcess( vertexes4,matrix_t,start_tool,matrix_w,start_workp,c )
+function [ matrixPair,xyOriginPair,feedParas,c,errCode ] = runElectricProcess( vertexes4,matrixPair,xyOriginPair,feedParas,c )
 %RUNPROCESS One Cycle
 %   all process simulation
 errCode=0;
 errorCount=3;%允许错误次数
 showFlag=c.showFlag;
+
+matrix_t=matrixPair.matrix_t;
+matrix_w=matrixPair.matrix_w;
+start_tool=xyOriginPair.start_tool;
+start_workp=xyOriginPair.start_workp;
+
+% showFlag ='showImage'
 
 % 【边界跟踪】
 % （输入：形状矩阵；输出：边界点集-行列，且最先追踪输出tool的首边）
@@ -32,8 +39,8 @@ tic,
 [ edgePoints,edgeNums ] = erodeModel2ElectricModel( vertexes4,mnPoints_t,mnPoints_w,start_tool,start_workp,c.origin_left_up,c.grid );
 toc
 % -------------------------------------------------------------------------
-angleC = 0;
-originC = [0, 0];
+angleC = start_tool(3);
+originC = start_tool(1,[1,2]);
 [ edgePoints ] = rotateC( edgePoints,[edgeNums,edgeNums(end)+1], angleC, originC );%假设tool有3个边，则有3+1=4个顶点需要旋转
 while 1
 % -------------------------------------------------------------------------
@@ -54,10 +61,11 @@ while 1
             errCode=errCode|errCode_feed;
             break % 此处可替换成return
         end
-        c.processDepth=c.processDepth-c.grid;
-        newline=ones(1,size(matrix_t,2));
-        matrix_t=[newline;matrix_t];
+%         c.processDepth=c.processDepth-c.grid;
+%         newline=ones(1,size(matrix_t,2));
+%         matrix_t=[newline;matrix_t];
 %         [ matrix ] = refreshModelMatrix( matrix,matrix_t,matrix_w,start_tool,start_workp );
+        [ feedParas,xyOriginPair ] = feed( feedParas,xyOriginPair );
         return
     end
     toc
@@ -67,7 +75,7 @@ while 1
     [sparkpoint_workp,errCode_sparkPts1] = sparkPoint(mnPoints_w,start_workp,maxPoint',maxE,maxAbsE,c);
     % 工具电极在“电场模型”中发生了旋转，此处反向旋转场强矢量E，使得E与“蚀除模型”的工具电极处在同一坐标系下
     [ maxPoint_t ] = rotateC( maxPoint,[1], -angleC, originC );
-    [ maxE_t ] = rotateC( maxE,[1], -angleC, originC );
+    [ maxE_t ] = rotateC( maxE,[1], -angleC, [0,0] );
     [sparkpoint_tool,errCode_sparkPts2] = sparkPoint(mnPoints_t,start_tool,maxPoint_t',maxE_t,maxAbsE,c);
     errCode_sparkPts = errCode_sparkPts1 & errCode_sparkPts2;
     toc
@@ -100,13 +108,19 @@ matrix=matrix_t;
 if (showFlag == 'showImage' | showFlag=='stepReslt')
     disp('result pic:');
     tic,
-    figure(5);
+    figure;
     imshow(matrix,'InitialMagnification','fit')
     title('蚀除结果');
     toc
 end
 
 errCode=errCode|errCode_sparkPts;
+
+%写入结构体。输入输出参数分类。
+matrixPair.matrix_t=matrix_t;
+matrixPair.matrix_w=matrix_w;
+xyOriginPair.start_tool=start_tool;
+xyOriginPair.start_workp=start_workp;
 end
 
 
