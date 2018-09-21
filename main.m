@@ -1,6 +1,7 @@
 %main 入口程序
 
-
+conf.showFlag='showImage';
+conf.showFlag='onlyReslt';
 
 % ---------------------------------start-----------------------------------
 try
@@ -11,14 +12,14 @@ catch
     % 建模
     grid=conf.grid;
     matrix_t=ones(25000/grid,10000/grid); % 25mm * 10mm
-%     tipLen=10000/grid/2;
-%     tipLeft=triu(ones(tipLen,tipLen),0);
-%     tip=[tipLeft,fliplr(tipLeft)];
-%     matrix_t(end-tipLen+1:end,:)=tip;
-    matrix_w=ones(5000/grid,20000/grid);
+    tipLen=10000/grid/2;
+    tipLeft=triu(ones(tipLen,tipLen),0);
+    tip=[tipLeft,fliplr(tipLeft)];
+    matrix_t(end-tipLen+1:end,:)=tip;
+    matrix_w=ones(10000/grid,20000/grid);
     [ vertexes4,matrixPair,xyOriginPair ] = initModelMatrix( matrix_t,matrix_w,conf );
     % 解析G代码
-    feedParas.codeG=[xyOriginPair.start_tool;xyOriginPair.start_tool+[100,-1000,-10]];
+    feedParas.codeG=[xyOriginPair.start_tool;xyOriginPair.start_tool+[0,-10000,0]];
     feedParas.rowG=1;
     feedParas.increment=[0,0,0];
     
@@ -26,7 +27,7 @@ catch
 %     imshow(matrix,'InitialMagnification','fit');
 end
 
-while count<=300
+while count<=4000
     count=count+1
     try
         % 电加工仿真 electric process simulation
@@ -39,7 +40,7 @@ while count<=300
     end
     
     % 错误处理
-    if(errCode || isSamePoint(xyOriginPair.start_tool,feedParas.codeG(feedParas.rowG,:)))
+    if(errCode || isSamePoint(xyOriginPair.start_tool,feedParas.codeG(size(feedParas.codeG,1),:)))
         save;
         figure;
         boundaryTrace(matrixPair.matrix_t, 'showImage', "tool");
@@ -53,7 +54,7 @@ end
 % ----------------------------------end------------------------------------
 
 save;
-curFileName=['rotate/try/matlab',num2str(count),'.mat'];
+curFileName=['rotate/straightLineDown/matlab',num2str(count),'.mat'];
 save(curFileName);
 % fprintf(1, '\n currentDepth = %d \n\n', conf.processDepth);
 

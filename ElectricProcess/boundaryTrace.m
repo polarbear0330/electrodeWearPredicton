@@ -18,6 +18,8 @@
     %%%%%%%%%  下面是显示边界跟踪的子函数  %%%%%%%%%    
 function [mnPoints]=boundaryTrace(matrix, showFlag, mode)
 % function g=boundary_trace(f) 跟踪目标的外边界，f位输入的二值图像，g为输出的二值图像
+matrixOriginal=matrix;
+
 offsetr=[-1, 0 ,1 ,0];
 offsetc=[0, 1, 0 ,-1];
 next_dir_table=[4,1,2,3];   % 搜索方向查找表,遇到0后，下一个方向（逆，左转）
@@ -81,8 +83,10 @@ end
 % % matrix(startr,startc)
 % bi=find(matrix==boundary);
 % [m,n]=ind2sub(size(matrix),bi);
-mnPoints = [m, n];
 
+
+% mnPoints = [m, n];
+mnPoints = deleteInsidePoint(m,n,matrixOriginal);
 
 %     tic,
 if (showFlag == 'showImage')
@@ -97,4 +101,25 @@ if (showFlag == 'showImage')
 
 end
 end
-%     toc
+
+function [mnPoints] = deleteInsidePoint(m,n,matrixOriginal)
+%剔除拐角内非边界点
+mnPoints=[m(1), n(1)];
+for i = 2:length(m)
+    if  matrixOriginal(m(i)+1,n(i)) &&...
+        matrixOriginal(m(i)-1,n(i)) &&...
+        matrixOriginal(m(i),n(i)+1) &&...
+        matrixOriginal(m(i),n(i)-1)
+%                     disp('delete inside point');
+        continue;
+    elseif m(i)==m(i-1) && n(i)==n(i-1)
+%         disp('delete duplicate point');
+        continue;
+    else
+        mnPoints=[mnPoints; m(i), n(i)];
+    end
+end
+end
+
+
+

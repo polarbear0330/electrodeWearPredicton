@@ -11,3 +11,41 @@ edgePoints=[edgePoints_t,vertexes4(:,[1,2]),edgePoints_w,vertexes4(:,[3,4])];
 edgeNums=1:size(edgePoints_t,2)-1;
 end
 
+function [ edgePoints,empty ] = pdeEdgeGeom( mnPoints,start,origin_left_up,grid )
+%PDEEDGEGEOM edges生成
+% 1.矩阵点连接成边，相同斜率的边是同一个边
+% 3.输出：edges顶点
+empty = 0;
+disp('i am new');
+
+m=mnPoints(:,1);
+n=mnPoints(:,2);
+
+%坐标系变换
+origin=origin_left_up+[grid/2,-grid/2];
+x=(n-1)*grid + start(1) + origin(1);
+y=(m-1)*grid*(-1) + start(2) + origin(2);
+
+oldAngle=atan2(y(2) - y(1), x(2) - x(1));%给一个不在-pi到+pi之间的初始值
+oldPoint=[x(1);y(1)];
+edgePoints=oldPoint;
+temp=[];
+for i=2:length(x)
+    deltax = x(i) - x(i - 1);
+    deltay = y(i) - y(i - 1);
+    angle = atan2(deltay, deltax);
+    if(angle ~= oldAngle)
+        temp=[temp;oldAngle];
+        oldAngle = angle;
+        oldPoint=[x(i-1);y(i-1)];
+        edgePoints=[edgePoints, oldPoint];
+    end
+end
+% temp
+% prePoints=[1 2 3 4
+%     5 6 7 8];
+end
+
+
+
+
