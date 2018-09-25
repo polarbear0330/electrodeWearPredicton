@@ -13,8 +13,8 @@ startPts=edgePoints; % 列：1 ~ end-1
 endPts=[edgePoints(:,2:end), edgePoints(:,1)]; % 列：2 ~ end
 n=size(edgePoints,2); % 点数 - 列数
 dl=[2*ones(1,n);startPts(1,:);endPts(1,:);startPts(2,:);endPts(2,:);ones(1,n);zeros(1,n)];
-% figure;
-% pdegplot(dl,'EdgeLabels','on','FaceLabels','on')
+figure;
+pdegplot(dl,'EdgeLabels','off','FaceLabels','on')
 % dl = [2,2,2,2,2,2,2,2,2,2,2,2;
 %     100, -30, 150, -150, 100,-100, 30, -30, -150, 100, 150, -30;
 %     -100, 30, 150, -150, 100,-100, 30, -30, -100, 150,  30,-150;

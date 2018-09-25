@@ -84,7 +84,7 @@ end
 % bi=find(matrix==boundary);
 % [m,n]=ind2sub(size(matrix),bi);
 
-
+%¼ò»¯±ß½ç
 % mnPoints = [m, n];
 mnPoints = deleteInsidePoint(m,n,matrixOriginal);
 

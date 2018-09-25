@@ -1,7 +1,7 @@
 %main Èë¿Ú³ÌÐò
 
-conf.showFlag='showImage';
-conf.showFlag='onlyReslt';
+% conf.showFlag='showImage';
+% conf.showFlag='onlyReslt';
 
 % ---------------------------------start-----------------------------------
 try
@@ -54,7 +54,7 @@ end
 % ----------------------------------end------------------------------------
 
 save;
-curFileName=['rotate/straightLineDown/matlab',num2str(count),'.mat'];
+curFileName=['rotate/straightLineDownEdgeSimplified/matlab',num2str(count),'.mat'];
 save(curFileName);
 % fprintf(1, '\n currentDepth = %d \n\n', conf.processDepth);
 
