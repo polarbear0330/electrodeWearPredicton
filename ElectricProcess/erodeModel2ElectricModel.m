@@ -46,16 +46,18 @@ end
 % temp
 hasOverlap=1;
 while hasOverlap
-    [ edgePoints,hasOverlap ] = rmOverlap(edgePoints);
+    [ edgePoints,hasOverlap ] = rmOverlapLines(edgePoints);
     disp("rm overlap lines");
 end
+
+[edgePoints] = fixSubGraph(edgePoints);
 
 % prePoints=[1 2 3 4
 %     5 6 7 8];
 end
 
 
-function [ edgePointsProcessed,hasOverlap ] = rmOverlap(edgePoints)
+function [ edgePointsProcessed,hasOverlap ] = rmOverlapLines(edgePoints)
 hasOverlap=0;
 
 x=edgePoints(1,:);
@@ -82,6 +84,37 @@ for i=3:length(x)
 end
 edgePointsProcessed=[edgePointsProcessed,[x(end);y(end)]];
 end
+
+
+function [edgePointsProcessed] = fixSubGraph(edgePoints)
+
+%--------------------------------------------------------------------------
+% % 去除重复点。尝试结果：仍然会有相交点，交于内部。因此，此段代码仅留作备用
+% [sortedEdgePoints,location] = unique(edgePoints','rows','first');
+% res = sortrows([location,sortedEdgePoints]);
+% edgePointsProcessed=(res(:,2:size(res,2)))';
+%--------------------------------------------------------------------------
+
+% 方法二：直接去除重复点之间的线段，即，去除闭合的subgraph
+length=size(edgePoints,2);
+edgePoints=edgePoints';
+edgePointsProcessed=edgePoints(1,:);
+for i=2:length
+    row=edgePoints(i,:);
+    [~,lib]=ismember(row,edgePointsProcessed,'rows');
+    if lib
+        edgePointsProcessed(lib+1:end,:)=[];
+    else
+        edgePointsProcessed=[edgePointsProcessed;row];
+    end
+end
+
+edgePointsProcessed=edgePointsProcessed';
+end
+
+
+
+
 
 
 

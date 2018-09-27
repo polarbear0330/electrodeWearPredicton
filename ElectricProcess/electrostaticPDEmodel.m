@@ -7,7 +7,7 @@ function [ max_absE,point_max,maxE ] = electrostaticPDEmodel( edgePoints,edgeNum
 % geometryFromEdges(model,dl);
 % figure(1);
 % pdegplot(model,'EdgeLabels','on');
-disp('pde model');
+% disp('pde model');
 %顶点连线成边
 startPts=edgePoints; % 列：1 ~ end-1
 endPts=[edgePoints(:,2:end), edgePoints(:,1)]; % 列：2 ~ end
@@ -24,7 +24,7 @@ pdegplot(dl,'EdgeLabels','off','FaceLabels','on')
 %     1,     1,   0,    0,   1,   1,  1,   1,    0,   0,   0,   0];
 
 Hgrad=1.9-meshCount/5;
-[p,e,t] = initmesh(dl,'Hgrad',Hgrad); %默认1.3 
+[p,e,t] = initmesh(dl,'Hgrad',Hgrad,'MesherVersion', 'R2013a'); %默认1.3 
 % subplot(2,2,1), pdemesh(p,e,t) 
 [p,e,t] = refinemesh(dl,p,e,t);
 for i=0:meshCount
