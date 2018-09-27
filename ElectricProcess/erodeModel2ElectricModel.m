@@ -47,7 +47,7 @@ end
 hasOverlap=1;
 while hasOverlap
     [ edgePoints,hasOverlap ] = rmOverlapLines(edgePoints);
-    disp("rm overlap lines");
+%     disp("rm overlap lines");
 end
 
 [edgePoints] = fixSubGraph(edgePoints);
@@ -75,7 +75,7 @@ for i=3:length(x)
     else
         prevPoint=[x(i-1);y(i-1)];
         if(isSamePoint(prevPoint,edgePointsProcessed(:,end)))
-            disp("overlap point");
+%             disp("overlap point");
         else
             edgePointsProcessed=[edgePointsProcessed,prevPoint];
         end
@@ -88,13 +88,20 @@ end
 
 function [edgePointsProcessed] = fixSubGraph(edgePoints)
 
-%--------------------------------------------------------------------------
-% % 去除重复点。尝试结果：仍然会有相交点，交于内部。因此，此段代码仅留作备用
-% [sortedEdgePoints,location] = unique(edgePoints','rows','first');
-% res = sortrows([location,sortedEdgePoints]);
-% edgePointsProcessed=(res(:,2:size(res,2)))';
-%--------------------------------------------------------------------------
+% [edgePointsProcessed] = rmRepeatedPoints(edgePoints);
+% [edgePointsProcessed] = rmSubGraph(edgePoints);
+[edgePointsProcessed] = rmPointsOnPolygon(edgePoints);
 
+end
+
+function [edgePointsProcessed] = rmRepeatedPoints(edgePoints)
+% 方法一：去除重复点。尝试结果：仍然会有相交点，交于内部。因此，此段代码仅留作备用
+[sortedEdgePoints,location] = unique(edgePoints','rows','first');
+res = sortrows([location,sortedEdgePoints]);
+edgePointsProcessed=(res(:,2:size(res,2)))';
+end
+
+function [edgePointsProcessed] = rmSubGraph(edgePoints)
 % 方法二：直接去除重复点之间的线段，即，去除闭合的subgraph
 length=size(edgePoints,2);
 edgePoints=edgePoints';
@@ -108,9 +115,46 @@ for i=2:length
         edgePointsProcessed=[edgePointsProcessed;row];
     end
 end
-
 edgePointsProcessed=edgePointsProcessed';
 end
+
+function [edgePointsProcessed] = rmPointsOnPolygon(edgePoints)
+% 判断点是否在多边形上，若在，则删除此点
+
+% 多边形最后一条线段会造成一些误差
+
+disp('rm Points On Polygon');
+xv=edgePoints(1,1:3);
+xv=xv';
+yv=edgePoints(2,1:3);
+yv=yv';
+
+length=size(edgePoints,2);
+for i=4:length
+    xi=edgePoints(1,i);
+    yi=edgePoints(2,i);
+    [~,on] = inpolygon(xi,yi,xv,yv);
+    if on
+        disp('on polygon');
+    else
+        xv=[xv;xi];
+        yv=[yv;yi];
+    end
+end
+edgePointsProcessed=[xv';yv'];
+
+end
+
+
+
+
+
+
+
+
+
+
+
 
 
 
