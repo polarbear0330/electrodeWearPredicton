@@ -46,7 +46,7 @@ u=assempde(b,p,e,t,1,0,0);
 
 if (showFlag == 'showImage')
     figure;
-    pdegplot(dl,'EdgeLabels','on','FaceLabels','on')
+    pdegplot(dl,'EdgeLabels','off','FaceLabels','off')
     axis equal
     
     figure;

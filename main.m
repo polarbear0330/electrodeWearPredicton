@@ -27,7 +27,7 @@ catch
 %     imshow(matrix,'InitialMagnification','fit');
 end
 
-while count<=4000
+while count<=5000
     count=count+1
     try
         % 电加工仿真 electric process simulation
