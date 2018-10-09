@@ -16,7 +16,7 @@ function [ edgePoints ] = rotateC( edgePoints,edgeNums, angleC, originC )
 % % originC = [0, 0];
 % % edgeNums = [1, 2];
 
-angleC = angleC / pi;
+angleC = angleC / 180 * pi;
 for i=edgeNums
     delta_x = edgePoints(1,i)-originC(1);
     delta_y = edgePoints(2,i)-originC(2);

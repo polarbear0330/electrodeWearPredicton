@@ -22,9 +22,12 @@ dl=[2*ones(1,n);startPts(1,:);endPts(1,:);startPts(2,:);endPts(2,:);ones(1,n);ze
 %     1,     1,   0,    0,   1,   1,  1,   1,    0,   0,   0,   0];
 
 Hgrad=1.9-meshCount/5;
+Hgrad=1.4;
 [p,e,t] = initmesh(dl,'Hgrad',Hgrad); %д╛хо1.3 
 % subplot(2,2,1), pdemesh(p,e,t) 
-[p,e,t] = refinemesh(dl,p,e,t);
+% [p,e,t] = refinemesh(dl,p,e,t);
+% [p,e,t] = refinemesh(dl,p,e,t);
+% [p,e,t] = refinemesh(dl,p,e,t);
 for i=0:meshCount
 %     meshCount
     [p,e,t] = refinemesh(dl,p,e,t);

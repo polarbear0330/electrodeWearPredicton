@@ -59,6 +59,7 @@ while 1
             fprintf(2,'请结合下方“未定义函数或变量 sparkpoint_tool”判断\n');
             errCode_feed = 1;
             errCode=errCode|errCode_feed;
+            feedParas.increment
             break % 此处可替换成return
         end
 %         c.processDepth=c.processDepth-c.grid;

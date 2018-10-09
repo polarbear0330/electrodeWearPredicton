@@ -1,11 +1,12 @@
 %main 入口程序
 
-% conf.showFlag='showImage';
-% conf.showFlag='onlyReslt';
+% % % % conf.showFlag='showImage';
+
 
 % ---------------------------------start-----------------------------------
 try
     load
+    conf.showFlag='onlyReslt';
 catch
     % 参数配置
     conf=loadConfig();
@@ -19,7 +20,10 @@ catch
     matrix_w=ones(10000/grid,20000/grid);
     [ vertexes4,matrixPair,xyOriginPair ] = initModelMatrix( matrix_t,matrix_w,conf );
     % 解析G代码
-    feedParas.codeG=[xyOriginPair.start_tool;xyOriginPair.start_tool+[0,-10000,0]];
+    feedParas.codeG=[
+        xyOriginPair.start_tool;
+        xyOriginPair.start_tool+[0,-5000,8];
+        xyOriginPair.start_tool+[0,-7000,30];];
     feedParas.rowG=1;
     feedParas.increment=[0,0,0];
     
@@ -54,7 +58,7 @@ end
 % ----------------------------------end------------------------------------
 
 save;
-curFileName=['rotate/straightLineDownEdgeSimplified/matlab',num2str(count),'.mat'];
+curFileName=['rotate/try/matlab',num2str(count),'.mat'];
 save(curFileName);
 % fprintf(1, '\n currentDepth = %d \n\n', conf.processDepth);
 
