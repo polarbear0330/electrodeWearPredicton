@@ -106,10 +106,14 @@ if (showFlag == 'showImage')
     title('不规则散点数据插值后的规则二维网格图像');
     
     figure;
+    pdegplot(dl,'EdgeLabels','off','FaceLabels','off')
+    axis equal
+    hold on;
     pdeplot(p,e,t,'FlowData',[Ex;Ey]);
     
     figure;%注：此种方式画出的图形，是经过了低精度插值处理后的图形
     pdeplot(p,e,t,'XYData',EE,'ColorMap','jet');
+    axis equal
     
     % figure(5);wrong!
     % surf(xpts, ypts, EE)

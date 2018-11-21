@@ -13,16 +13,16 @@ catch
     % 建模
     grid=conf.grid;
     matrix_t=ones(25000/grid,10000/grid); % 25mm * 10mm
-    tipLen=10000/grid/2;
-    tipLeft=triu(ones(tipLen,tipLen),0);
-    tip=[tipLeft,fliplr(tipLeft)];
-    matrix_t(end-tipLen+1:end,:)=tip;
+        tipLen=10000/grid/2;
+        tipLeft=triu(ones(tipLen,tipLen),0);
+        tip=[tipLeft,fliplr(tipLeft)];
+        matrix_t(end-tipLen+1:end,:)=tip;
     matrix_w=ones(10000/grid,20000/grid);
     [ vertexes4,matrixPair,xyOriginPair ] = initModelMatrix( matrix_t,matrix_w,conf );
     % 解析G代码
     feedParas.codeG=[
         xyOriginPair.start_tool;
-        xyOriginPair.start_tool+[0,-5000,8];
+        xyOriginPair.start_tool+[0,-5000,0];
         xyOriginPair.start_tool+[0,-7000,30];];
     feedParas.rowG=1;
     feedParas.increment=[0,0,0];
