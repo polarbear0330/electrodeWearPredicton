@@ -11,6 +11,12 @@ if size(point1)==size(point2)
         if(abs(point1(i) - point2(i)) >= 1)%说明是同一个点。误差给个1um应该足够了
             isSame=0;
         end
+        
+        if count==3
+            if abs(point1(i) - point2(i)) >= 0.005 %角度大于它，就不是一个点
+                isSame=0;
+            end
+        end
     end
 else
     fprintf(2, '\n isSamePoint：两个点维度不一致 \n\n');

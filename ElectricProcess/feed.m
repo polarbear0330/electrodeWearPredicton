@@ -33,7 +33,7 @@ end
 function [ increment ] = feedInterval( codeG,row1,row2 )
 coord1 = codeG(row1,:);
 coord2 = codeG(row2,:);
-%用单位弧长法，处理xy进给量,每次进给弧长最少5um左右
+%用单位弧长法，处理xy进给量,每次进给弧长最大5um左右
 minLimitLen=5;%um
 
 delta=coord2-coord1;
