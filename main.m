@@ -31,7 +31,7 @@ catch
 %     imshow(matrix,'InitialMagnification','fit');
 end
 
-while count<=5000
+while count<=6000
     count=count+1
     try
         % 电加工仿真 electric process simulation
@@ -58,7 +58,7 @@ end
 % ----------------------------------end------------------------------------
 
 save;
-curFileName=['rotate/try/matlab',num2str(count),'.mat'];
+curFileName=['blisk/matlab',num2str(count),'.mat'];
 save(curFileName);
 % fprintf(1, '\n currentDepth = %d \n\n', conf.processDepth);
 

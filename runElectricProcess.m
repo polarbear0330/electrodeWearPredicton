@@ -40,7 +40,7 @@ tic,
 toc
 % -------------------------------------------------------------------------
 angleC = start_tool(3);
-originC = start_tool(1,[1,2]);
+originC = start_tool(1,[1,2])+[-1106,9875]; %后面的这个坐标是以start_tool为原点，旋转轴中心坐标（就是电极杆）
 [ edgePoints ] = rotateC( edgePoints,[edgeNums,edgeNums(end)+1], angleC, originC );%假设tool有3个边，则有3+1=4个顶点需要旋转
 while 1
 % -------------------------------------------------------------------------
@@ -54,14 +54,17 @@ while 1
     tic,
     if(maxAbsE < c.breakE)
         maxAbsE
-        if(maxAbsE < 0.3)
-            fprintf(2,'场强过小(<0.3)，疑似tool与workpiece发生接触，等势了\n');
-            fprintf(2,'请结合下方“未定义函数或变量 sparkpoint_tool”判断\n');
-            errCode_feed = 1;
-            errCode=errCode|errCode_feed;
-            feedParas.increment
-            break % 此处可替换成return
-        end
+%         当电极间距较远时，这一部分要注释掉START
+%         if(maxAbsE < 0.3)
+%             fprintf(2,'场强过小(<0.3)，疑似tool与workpiece发生接触，等势了\n');
+%             fprintf(2,'请结合下方“未定义函数或变量 sparkpoint_tool”判断\n');
+%             errCode_feed = 1;
+%             errCode=errCode|errCode_feed;
+%             feedParas.increment
+%             break % 此处可替换成return
+%         end
+%         当电极间距较远时，这一部分要注释掉END
+
 %         c.processDepth=c.processDepth-c.grid;
 %         newline=ones(1,size(matrix_t,2));
 %         matrix_t=[newline;matrix_t];
