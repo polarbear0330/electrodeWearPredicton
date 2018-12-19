@@ -12,18 +12,19 @@ catch
     conf=loadConfig();
     % 建模
     grid=conf.grid;
-    matrix_t=ones(25000/grid,10000/grid); % 25mm * 10mm
-        tipLen=10000/grid/2;
-        tipLeft=triu(ones(tipLen,tipLen),0);
-        tip=[tipLeft,fliplr(tipLeft)];
-        matrix_t(end-tipLen+1:end,:)=tip;
+    matrix_t=ones(25000/grid,9825/grid); % 25mm * 9.825mm
+%         tipLen=10000/grid/2;
+%         tipLeft=triu(ones(tipLen,tipLen),0);
+%         tip=[tipLeft,fliplr(tipLeft)];
+%         matrix_t(end-tipLen+1:end,:)=tip;
     matrix_w=ones(10000/grid,20000/grid);
     [ vertexes4,matrixPair,xyOriginPair ] = initModelMatrix( matrix_t,matrix_w,conf );
     % 解析G代码
     feedParas.codeG=[
         xyOriginPair.start_tool;
-        xyOriginPair.start_tool+[0,-5000,0];
-        xyOriginPair.start_tool+[0,-7000,30];];
+        xyOriginPair.start_tool+[0,-10075,0];
+%         xyOriginPair.start_tool+[0,-7000,30];
+        ];
     feedParas.rowG=1;
     feedParas.increment=[0,0,0];
     
@@ -31,10 +32,11 @@ catch
 %     imshow(matrix,'InitialMagnification','fit');
 end
 
-while count<=6000
+while count<=10000
     count=count+1
     try
         % 电加工仿真 electric process simulation
+%         conf.showFlag='showImage'
         [ matrixPair,xyOriginPair,feedParas,conf,errCode ] = runElectricProcess(vertexes4,matrixPair,xyOriginPair,feedParas,conf);
     catch exception
         save;
@@ -58,8 +60,9 @@ end
 % ----------------------------------end------------------------------------
 
 save;
-curFileName=['blisk/matlab',num2str(count),'.mat'];
+curFileName=['ExperimentSimulationCases/blisk_4mm/matlab',num2str(count),'.mat'];
 save(curFileName);
+
 % fprintf(1, '\n currentDepth = %d \n\n', conf.processDepth);
 
 

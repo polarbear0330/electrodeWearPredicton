@@ -40,12 +40,14 @@ tic,
 toc
 % -------------------------------------------------------------------------
 angleC = start_tool(3);
-originC = start_tool(1,[1,2])+[-1106,9875]; %后面的这个坐标是以start_tool为原点，旋转轴中心坐标（就是电极杆）
+% originC = start_tool(1,[1,2])+[-1106,9875]; %后面的这个坐标是以start_tool为原点，旋转轴中心坐标（就是电极杆）
+originC = start_tool(1,[1,2])+[-1683,9875]; %后面的这个坐标是以start_tool为原点，旋转轴中心坐标（就是电极杆）
 [ edgePoints ] = rotateC( edgePoints,[edgeNums,edgeNums(end)+1], angleC, originC );%假设tool有3个边，则有3+1=4个顶点需要旋转
 while 1
 % -------------------------------------------------------------------------
     fprintf(2,'calculate E: \n');
     tic,
+%     edgePoints=edgePoints+[-10212.5;30112.5];%将实验结果与仿真结果画在同一幅图中
     [~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,3-errorCount,showFlag);
 %     [maxAbsE,maxPoint,maxE] = electrostaticPDEmodel(edgePoints,edgeNums,3-errorCount,showFlag);
     toc
