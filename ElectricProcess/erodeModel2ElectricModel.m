@@ -9,6 +9,9 @@ function [ edgePoints,edgeNums ] = erodeModel2ElectricModel( vertexes4,mnPoints_
 edgePoints=[edgePoints_t,vertexes4(:,[1,2]),edgePoints_w,vertexes4(:,[3,4])];
 
 edgeNums=1:size(edgePoints_t,2)-1;
+
+% edgePointsW=edgePoints_w';%用于后处理，输出仿真数据
+% save('edgePointsW.mat', 'edgePointsW');%用于后处理，输出仿真数据
 end
 
 

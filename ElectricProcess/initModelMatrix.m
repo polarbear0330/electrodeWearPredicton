@@ -9,7 +9,7 @@ function [ vertexes4,matrixPair,xyOriginPair ] = initModelMatrix( matrix_t,matri
 
 grid = conf.grid;
 gap=conf.sparkDist/grid;
-gap=158
+% gap=158
 % gap=1
 wideRatio=conf.wideRatio;
 

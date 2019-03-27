@@ -38,11 +38,26 @@ disp('model transform:');
 tic,
 [ edgePoints,edgeNums ] = erodeModel2ElectricModel( vertexes4,mnPoints_t,mnPoints_w,start_tool,start_workp,c.origin_left_up,c.grid );
 toc
+% edgePointsStart = edgePoints'; %用于后处理，输出仿真数据
+% save('edgePointsStart.mat', 'edgePointsStart');
+% return
 % -------------------------------------------------------------------------
 angleC = start_tool(3);
 % originC = start_tool(1,[1,2])+[-1106,9875]; %后面的这个坐标是以start_tool为原点，旋转轴中心坐标（就是电极杆）
 originC = start_tool(1,[1,2])+[-1683,9875]; %后面的这个坐标是以start_tool为原点，旋转轴中心坐标（就是电极杆）
 [ edgePoints ] = rotateC( edgePoints,[edgeNums,edgeNums(end)+1], angleC, originC );%假设tool有3个边，则有3+1=4个顶点需要旋转
+
+% %调试用图--START
+% figure(1);
+% hold on
+% edgePoints=edgePoints(:,[edgeNums,edgeNums(end)+1]);
+% edgePoints=edgePoints-[0;10500];
+% % edgePoints=edgePoints-[17050;-35075];
+% fill(edgePoints(1,:),edgePoints(2,:),'g');
+% return
+% %调试用图--END
+
+
 while 1
 % -------------------------------------------------------------------------
     fprintf(2,'calculate E: \n');
@@ -51,20 +66,21 @@ while 1
     [~,~,~,~,~,maxAbsE,maxPoint,maxE] = electrostaticPDE(edgePoints,edgeNums,3-errorCount,showFlag);
 %     [maxAbsE,maxPoint,maxE] = electrostaticPDEmodel(edgePoints,edgeNums,3-errorCount,showFlag);
     toc
+%     return
 % -------------------------------------------------------------------------
     disp('feed:');
     tic,
     if(maxAbsE < c.breakE)
         maxAbsE
 %         当电极间距较远时，这一部分要注释掉START
-%         if(maxAbsE < 0.3)
-%             fprintf(2,'场强过小(<0.3)，疑似tool与workpiece发生接触，等势了\n');
-%             fprintf(2,'请结合下方“未定义函数或变量 sparkpoint_tool”判断\n');
-%             errCode_feed = 1;
-%             errCode=errCode|errCode_feed;
-%             feedParas.increment
-%             break % 此处可替换成return
-%         end
+        if(maxAbsE < 0.3)
+            fprintf(2,'场强过小(<0.3)，疑似tool与workpiece发生接触，等势了\n');
+            fprintf(2,'请结合下方“未定义函数或变量 sparkpoint_tool”判断\n');
+            errCode_feed = 1;
+            errCode=errCode|errCode_feed;
+            feedParas.increment
+            break % 此处可替换成return
+        end
 %         当电极间距较远时，这一部分要注释掉END
 
 %         c.processDepth=c.processDepth-c.grid;

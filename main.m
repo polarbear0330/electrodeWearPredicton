@@ -3,27 +3,28 @@
 % % % % conf.showFlag='showImage';
 
 
-% ---------------------------------start-----------------------------------
+% -----------------------simulation-start----------------------------------
 try
     load
     conf.showFlag='onlyReslt';
 catch
     % 参数配置
     conf=loadConfig();
-    % 建模
+    % 工具、工件矩阵的建立
     grid=conf.grid;
-    matrix_t=ones(25000/grid,9825/grid); % 25mm * 9.825mm
-%         tipLen=10000/grid/2;
+    matrix_t=ones(25000/grid,9825/grid); % 25mm * 9.825mm，平头电极
+%         tipLen=10000/grid/2; % 尖头电极的一种建模方式
 %         tipLeft=triu(ones(tipLen,tipLen),0);
 %         tip=[tipLeft,fliplr(tipLeft)];
 %         matrix_t(end-tipLen+1:end,:)=tip;
     matrix_w=ones(10000/grid,20000/grid);
+    % 蚀除模型的初始化     
     [ vertexes4,matrixPair,xyOriginPair ] = initModelMatrix( matrix_t,matrix_w,conf );
     % 解析G代码
     feedParas.codeG=[
         xyOriginPair.start_tool;
         xyOriginPair.start_tool+[0,-10075,0];
-%         xyOriginPair.start_tool+[0,-7000,30];
+        xyOriginPair.start_tool+[0,-7000,30];
         ];
     feedParas.rowG=1;
     feedParas.increment=[0,0,0];
@@ -32,11 +33,11 @@ catch
 %     imshow(matrix,'InitialMagnification','fit');
 end
 
-while count<=10000
+while count<=50 %调试程序时，可设为1至100左右；正式仿真时，设置一个特别大的值如99999
     count=count+1
     try
-        % 电加工仿真 electric process simulation
-%         conf.showFlag='showImage'
+        % 电加工仿真函数
+%         conf.showFlag='showImage' % 用于即时测试
         [ matrixPair,xyOriginPair,feedParas,conf,errCode ] = runElectricProcess(vertexes4,matrixPair,xyOriginPair,feedParas,conf);
     catch exception
         save;
@@ -45,7 +46,7 @@ while count<=10000
         disp(errorReport);
     end
     
-    % 错误处理
+    % 终止或结束处理
     if(errCode || isSamePoint(xyOriginPair.start_tool,feedParas.codeG(size(feedParas.codeG,1),:)))
         save;
         figure;
@@ -53,15 +54,15 @@ while count<=10000
         figure;
         boundaryTrace(matrixPair.matrix_w, 'showImage', "workpiece");
         
-        fprintf(2, '\n Work Done! : \n\n');
+        fprintf(2, '\n Work Done/Stop! : \n\n');
         break;
     end
 end
-% ----------------------------------end------------------------------------
+% -----------------------simulation-end------------------------------------
 
-save;
-curFileName=['ExperimentSimulationCases/blisk_4mm/matlab',num2str(count),'.mat'];
-save(curFileName);
+% save;
+% curFileName=['ExperimentSimulationCases/flat1/matlab',num2str(count),'.mat'];
+% save(curFileName);
 
 % fprintf(1, '\n currentDepth = %d \n\n', conf.processDepth);
 
@@ -79,7 +80,7 @@ toc
 % -------------------------------------------------------------------------
 
 
-% 后处理-------------------------------------------------------------------
+% 后处理与显示---系统调试时可启动这部分代码-----------------------------------
 % whole=matrix;
 % tool=matrix_t;
 % workp=matrix_w;
@@ -95,7 +96,7 @@ toc
 % matrix_test=[matrix_back0,matrix_t,matrix_back0];
 % imshow(matrix_test,'InitialMagnification','fit')
 
-% 测试----------------------------------------------------
+% 测试代码-----------------------------------------------------------------
 % [ matrix_t ] = debrisRemove( matrix_t );
 % imshow(matrix_t(679:end,:),'InitialMagnification','fit')
 % 

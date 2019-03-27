@@ -1,6 +1,6 @@
 
-f=imread('4mm_640_400.png');
-figure(1);
+f=imread('1.png');
+figure(5);
 imshow(f);
 title('原图');
 
@@ -17,8 +17,10 @@ title('通过graythresh计算灰度门槛时的二值图像');
 
 
 
-matrix_t=ones(size(bw1));
-matrix_t(bw1)=0;
+matrix_t=ones(size(bw2));
+matrix_t(bw2)=0;
 figure(4);
 imshow(matrix_t)
 title('矩阵');
+
+% save('wholeElectrode.mat', 'matrix_t');
